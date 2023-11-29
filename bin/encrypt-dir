@@ -11,7 +11,9 @@ if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
 fi
 
 for file in $1/**/!(*.gpg); do
-  [[ -f $file ]] && encrypt-and-shred "$file" "$PASSPHRASE"
+  if [[ -f $file ]] && [[ ! -f "$file.gpg" ]]; then 
+    encrypt-and-shred "$file" "$PASSPHRASE"
+  fi
 done
 
 shopt -u extglob globstar
