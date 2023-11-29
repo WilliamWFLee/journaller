@@ -1,10 +1,8 @@
 #!/bin/bash
 
-. ~/.journalrc
+. ../lib/logging
 
-ERROR="\033[31mError:\033[0m"
-INFO="\033[32mInfo:\033[0m"
-WARN="\033[33mWarning: \033[0m"
+. ~/.journalrc
 
 DIR="$JOURNAL_DIR/${1//-/\/}"
 
