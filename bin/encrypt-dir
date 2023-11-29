@@ -15,6 +15,3 @@ for file in $1/**/!(*.gpg); do
     encrypt-and-shred "$file" "$PASSPHRASE"
   fi
 done
-
-shopt -u extglob globstar
-
