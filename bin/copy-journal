@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. ~/.journalrc
+
+rsync -av --checksum --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
+

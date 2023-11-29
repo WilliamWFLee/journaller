@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Symmetrically encrypt and shred a file  
+
+echo "Encrypting and shredding $1" 
+if [[ -n "$2" ]]; then 
+  gpg -c --batch --passphrase "$2" $1 && shred -xun 3 $1 
+else
+  gpg -c $1 && shred -xun 3 $1
+fi
+

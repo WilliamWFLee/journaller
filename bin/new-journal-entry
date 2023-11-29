@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. ~/.journalrc
+
+DIR="$JOURNAL_DIR/$(date +'%Y/%m/%d')"
+mkdir -p "$DIR"
+echo -ne "**$(date +'%H:%M')**\n\n" >> "$DIR/text.md"
+vim "$DIR/text.md"
+
+if [[ "$@" == *"--encrypt"* ]]; then  
+  encrypt-dir $DIR
+fi
+

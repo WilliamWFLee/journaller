@@ -1,0 +1,18 @@
+#!/bin/bash
+
+shopt -s extglob globstar
+
+read -rsp 'Enter passphrase: ' PASSPHRASE; echo
+read -rsp 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION; echo
+
+if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
+  echo 'Passphrases do not match' > /dev/stderr
+  exit 1
+fi
+
+for file in $1/**/!(*.gpg); do
+  [[ -f $file ]] && encrypt-and-shred "$file" "$PASSPHRASE"
+done
+
+shopt -u extglob globstar
+
