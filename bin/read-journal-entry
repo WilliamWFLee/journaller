@@ -1,0 +1,44 @@
+#!/bin/bash
+
+. ~/.journalrc
+
+ERROR="\033[31mError:\033[0m"
+INFO="\033[32mInfo:\033[0m"
+WARN="\033[33mWarning: \033[0m"
+
+DIR="$JOURNAL_DIR/${1//-/\/}"
+
+if [[ ! -d $DIR ]]; then
+  echo -e "$ERROR Journal entry does not exist for $1"
+  exit 1
+fi
+
+read -rsp 'Enter passphrase: ' PASSPHRASE
+echo
+
+shopt -s extglob
+
+for file in $DIR/*.gpg; do
+  decrypted_file="${file/.gpg/}"
+  if [[ -f "$decrypted_file" ]]; then
+    echo -e "$WARN $file already decrypted, skipping..."
+  else
+    echo -e "$INFO Decrypting $file"
+    gpg -d -o "$decrypted_file" --batch --passphrase "$PASSPHRASE" "$file" 2> /dev/null
+    if [[ $? -ne 0 ]]; then
+      echo -e "$ERROR Failed to decrypt file, check key"
+      exit 2
+    fi
+  fi
+done
+
+pandoc -f markdown -t html $DIR/text.md > $DIR/text.html
+open $DIR/text.html 2> /dev/null
+
+echo -ne "$INFO Opening in browser, press <Return> to continue" && read
+echo -e "$INFO Shredding decrypted files"
+
+for file in $DIR/!(*.gpg); do
+  echo -e "$INFO Shredding $file"
+  shred -xun 3 $file
+done
