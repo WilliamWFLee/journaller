@@ -1,12 +1,14 @@
 #!/bin/bash
 
+. "$(dirname $0)/../lib/logging"
+
 shopt -s extglob globstar
 
 read -rsp 'Enter passphrase: ' PASSPHRASE; echo
 read -rsp 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION; echo
 
 if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
-  echo 'Passphrases do not match' > /dev/stderr
+  echo -e "$ERROR Passphrases do not match" > /dev/stderr
   exit 1
 fi
 

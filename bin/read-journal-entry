@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ../lib/logging
+. "$(dirname $0)/../lib/logging"
 
 . ~/.journalrc
 
