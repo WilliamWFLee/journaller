@@ -4,9 +4,9 @@
 
 . ~/.journalrc
 
-DIR="$JOURNAL_DIR/${1//-/\/}"
+dir="$JOURNAL_DIR/${1//-/\/}"
 
-if [[ ! -d $DIR ]]; then
+if [[ ! -d $dir ]]; then
   echo -e "$ERROR Journal entry does not exist for $1"
   exit 1
 fi
@@ -16,7 +16,7 @@ echo
 
 shopt -s extglob
 
-for file in $DIR/*.gpg; do
+for file in $dir/*.gpg; do
   decrypted_file="${file/.gpg/}"
   if [[ -f "$decrypted_file" ]]; then
     echo -e "$WARN $file already decrypted, skipping..."
@@ -30,13 +30,13 @@ for file in $DIR/*.gpg; do
   fi
 done
 
-pandoc -f markdown -t html $DIR/text.md > $DIR/text.html
-open $DIR/text.html 2> /dev/null
+pandoc -f markdown -t html $dir/text.md > $dir/text.html
+open $dir/text.html 2> /dev/null
 
 echo -ne "$INFO Opening in browser, press <Return> to continue" && read
 echo -e "$INFO Shredding decrypted files"
 
-for file in $DIR/!(*.gpg); do
+for file in $dir/!(*.gpg); do
   echo -e "$INFO Shredding $file"
   shred -xun 3 $file
 done
