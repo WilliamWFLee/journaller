@@ -5,6 +5,11 @@
 shopt -s extglob globstar
 
 read -rsp 'Enter passphrase: ' PASSPHRASE; echo
+if [[ -z "${PASSPHRASE}" ]]; then
+  echo -e "$ERROR Passphrase is empty" > /dev/stderr
+  exit 1
+fi
+
 read -rsp 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION; echo
 
 if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
