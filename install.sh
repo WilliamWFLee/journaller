@@ -1,15 +1,10 @@
 #!/bin/bash
 
 . "$(dirname $0)/lib/logging"
-. "$(dirname $0)/lib/configuration"
+. "$(dirname $0)/lib/commands/config"
 
-if [[ ! -f ~/.journalrc ]]; then
-  log_info "Generating ~/.journalrc"
-  _journal_config_new
-  _journal_config_dir
-else
-  log_info "~/.journalrc already exists"
-fi
+_journal_config_new
+_journal_config_dir_set
 
 log_info "Checking dependencies..."
 dpkg -s gpg pandoc vim > /dev/null 2>&1

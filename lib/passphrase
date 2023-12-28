@@ -1,13 +1,6 @@
 _read_passphrase() {
-  prompt=$1
-  if [[ -z "$prompt" ]]; then
-    prompt='Enter passphrase: '
-  fi
-
-  var=$2
-  if [[ -z "$var" ]]; then
-    var='PASSPHRASE'
-  fi
+  prompt="${1:-Enter passphrase}"
+  var="${2:-PASSPHRASE}"
   read -rsp "$prompt" "$var" && echo
 }
 

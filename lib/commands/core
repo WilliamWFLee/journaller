@@ -1,12 +1,25 @@
 LIB_DIR=$(dirname $BASH_SOURCE)
 
-. "$LIB_DIR/logging"
-. "$LIB_DIR/date"
-. "$LIB_DIR/shredding"
-. "$LIB_DIR/encryption"
-. "$LIB_DIR/passphrase"
+. "$LIB_DIR/../logging"
+. "$LIB_DIR/../date"
+. "$LIB_DIR/../shredding"
+. "$LIB_DIR/../encryption"
+. "$LIB_DIR/../passphrase"
 
 shopt -s extglob globstar nullglob
+
+_journal_() {
+  cat <<- EOF
+Syntax: $0 <command> <args>
+
+Possible options for <command>:
+  new
+  read
+  copy
+  encrypt
+  config
+EOF
+}
 
 _journal_new() {
   dir="$JOURNAL_DIR/$(_current_date)"
@@ -22,10 +35,7 @@ _journal_new() {
 }
 
 _journal_read() {
-  date=$1
-  if [[ -z $date ]]; then
-    date="$(_current_date)"
-  fi
+  date="${1:-$(_current_date)}"
   dir="$JOURNAL_DIR/${date//-/\/}"
 
   if [[ ! -d $dir ]]; then

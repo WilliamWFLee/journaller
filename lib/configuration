@@ -1,7 +1,0 @@
-_journal_config_new() {
-  touch ~/.journalrc
-}
-
-_journal_config_dir() {
-  echo 'JOURNAL_DIR="$HOME/journal"' >> ~/.journalrc
-}
