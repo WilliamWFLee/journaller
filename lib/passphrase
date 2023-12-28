@@ -1,0 +1,24 @@
+_read_passphrase() {
+  prompt=$1
+  if [[ -z "$prompt" ]]; then
+    prompt='Enter passphrase: '
+  fi
+
+  var=$2
+  if [[ -z "$var" ]]; then
+    var='PASSPHRASE'
+  fi
+  read -rsp "$prompt" "$var" && echo
+}
+
+_new_passphrase() {
+  _read_passphrase 'Enter passphrase: '
+  if [[ -z "${PASSPHRASE}" ]]; then
+    return 1
+  fi
+
+  _read_passphrase 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION
+  if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
+    return 2
+  fi
+}

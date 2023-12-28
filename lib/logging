@@ -1,5 +1,15 @@
-#!/bin/bash
-
 ERROR="\033[31mError:\033[0m"
 INFO="\033[32mInfo:\033[0m"
 WARN="\033[33mWarning:\033[0m"
+
+log_info() {
+  echo -e "$INFO ${@}"
+}
+
+log_warn() {
+  echo -e "$WARN ${@}" > /dev/stderr
+}
+
+log_error() {
+  echo -e "$ERROR ${@}" > /dev/stderr
+}

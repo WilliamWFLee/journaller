@@ -1,3 +1,8 @@
 _journal_shred_file() {
-  shred -xun 3 $1
+  file="$1"
+  encrypted_file="$file.gpg"
+  if [[ ! -f "$encrypted_file" && "$file" != *".html" ]]; then
+    return 1
+  fi
+  shred -xun 3 $file
 }

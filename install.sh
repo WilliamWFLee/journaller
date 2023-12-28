@@ -2,26 +2,26 @@
 
 . "$(dirname $0)/lib/logging"
 
-echo -e "$INFO Checking dependencies..."
+log_info "Checking dependencies..."
 dpkg -s gpg pandoc vim > /dev/null 2>&1
 
 if [[ $? -ne 0 ]]; then
-  echo -e "$INFO Installing missing dependencies..."
+  log_info "Installing missing dependencies..."
   sudo apt install gpg pandoc vim -y --no-install-recommends
 
   if [[ $? -ne 0 ]]; then
-    echo -e "$ERROR Dependencies could not installed. Check output."
+    log_error "Dependencies could not installed. Check output."
     exit 1
   fi
 else
-  echo -e "$INFO Dependencies already satisfied"
+  log_info "Dependencies already satisfied"
 fi
 
 if [[ ! -f ~/.journalrc ]]; then
-  echo -e "$INFO Generating ~/.journalrc"
+  log_info "Generating ~/.journalrc"
   echo 'JOURNAL_DIR=$HOME/journal' > ~/.journalrc
 else
-  echo -e "$INFO ~/.journalrc already exists"
+  log_info "~/.journalrc already exists"
 fi
 
-echo -e "$INFO Installation done."
+log_info "Installation done."
