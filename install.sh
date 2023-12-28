@@ -7,7 +7,7 @@ _journal_config_new
 _journal_config_dir_set
 
 log_info "Checking dependencies..."
-dpkg -s gpg pandoc vim > /dev/null 2>&1
+type gpg pandoc vim > /dev/null 2>&1
 
 if [[ $? -ne 0 ]]; then
   log_info "Installing missing dependencies using apt..."
