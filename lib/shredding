@@ -1,0 +1,3 @@
+_journal_shred_file() {
+  shred -xun 3 $1
+}

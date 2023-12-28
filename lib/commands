@@ -1,0 +1,95 @@
+LIB_DIR=$(dirname $BASH_SOURCE)
+
+. "$LIB_DIR/logging"
+. "$LIB_DIR/date"
+. "$LIB_DIR/shredding"
+. "$LIB_DIR/encryption"
+
+shopt -s extglob globstar nullglob
+
+_journal_new() {
+  dir="$JOURNAL_DIR/$(_current_date)"
+
+  mkdir -p "$dir"
+  echo -ne "**$(_current_time)**\n\n" >> "$dir/text.md"
+  vim "$dir/text.md"
+
+  if [[ "$@" == *"--encrypt"* ]]; then  
+    encrypt-dir $dir
+  fi
+}
+
+_journal_read() {
+  date=$1
+  if [[ -z $1 ]]; then
+    date="$(_current_date)"
+  fi
+  dir="$JOURNAL_DIR/${date//-/\/}"
+
+  if [[ ! -d $dir ]]; then
+    echo -e "$ERROR Journal entry does not exist for $date"
+    exit 1
+  fi
+
+  read -rsp 'Enter passphrase: ' PASSPHRASE
+  echo
+
+  for file in $dir/*.gpg; do
+    decrypted_file="${file/.gpg/}"
+    if [[ -f "$decrypted_file" ]]; then
+      echo -e "$WARN $file already decrypted, skipping..."
+    else
+      echo -e "$INFO Decrypting $file"
+      gpg -d -o "$decrypted_file" --batch --passphrase "$PASSPHRASE" "$file" 2> /dev/null
+      if [[ $? -ne 0 ]]; then
+        echo -e "$ERROR Failed to decrypt file, check key"
+        exit 2
+      fi
+    fi
+  done
+
+
+  pandoc -f markdown -t html $dir/text.md > $dir/text.html
+  open $dir/text.html 2> /dev/null
+
+  echo -ne "$INFO Opening in browser, press <Return> to continue" && read
+
+  echo -e "$INFO Shredding decrypted files"
+  for file in $dir/!(*.gpg); do
+    encrypted_file="${file}.gpg"
+    if [[ ! -f "$encrypted_file" && "$file" != *".html" ]]; then
+      echo -e "$WARN $file was not encrypted, skipping..."
+    else
+      echo -e "$INFO Shredding $file"
+      _journal_shred_file $file
+    fi
+  done
+}
+
+_journal_copy() {
+  rsync -av --modify-window=1 --times --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
+}
+
+_journal_encrypt() {
+  echo -e "$INFO Encrypting journal..."
+
+  read -rsp 'Enter passphrase: ' PASSPHRASE; echo
+  if [[ -z "${PASSPHRASE}" ]]; then
+    echo -e "$ERROR Passphrase is empty" > /dev/stderr
+    exit 1
+  fi
+
+  read -rsp 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION; echo
+
+  if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
+    echo -e "$ERROR Passphrases do not match" > /dev/stderr
+    exit 1
+  fi
+
+  for file in $JOURNAL_DIR/**/!(*.gpg); do
+    if [[ -f "$file" && ! -f "$file.gpg" ]]; then 
+      echo -e "$INFO Encrypting and shredding $file" 
+      _journal_encrypt_file "$file" "$PASSPHRASE" && _journal_shred_file $file
+    fi
+  done
+}

@@ -1,0 +1,7 @@
+_journal_encrypt_file() {
+  if [[ -z "$2" ]]; then 
+    gpg -c $1
+  else
+    gpg -c --batch --passphrase "$2" $1
+  fi
+}

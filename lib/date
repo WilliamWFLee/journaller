@@ -1,0 +1,7 @@
+_current_date() {
+  date +'%Y/%m/%d'
+}
+
+_current_time() {
+  date +'%H:%M'
+}

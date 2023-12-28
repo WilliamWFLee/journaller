@@ -1,6 +1,0 @@
-#!/bin/bash
-
-. ~/.journalrc
-
-rsync -av --modify-window=1 --times --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
-

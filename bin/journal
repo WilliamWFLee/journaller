@@ -1,0 +1,5 @@
+#/bin/bash
+
+. ~/.journalrc
+. "$(dirname $0)/../lib/commands"
+"_journal_$1" "${@:2}"
