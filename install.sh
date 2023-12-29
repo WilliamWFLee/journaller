@@ -3,26 +3,7 @@
 . "$(dirname $0)/lib/logging"
 . "$(dirname $0)/lib/commands/config"
 
-if [[ -f ~/.journalrc ]]; then
-  . ~/.journalrc
-else
-  _journal_config_new
-fi
-
-current_dir=$(_journal_config_dir_get)
-if [[ -n "${current_dir}"  ]]; then
-  log_warn 'JOURNAL_DIR already defined'
-  read -p 'Do you want to overwrite JOURNAL_DIR (Y/N)? ' confirm
-
-  if [[ "${confirm,,}" == "y"* ]]; then
-    _journal_config_dir_set
-  else
-    log_info 'JOURNAL_DIR not overwritten'
-  fi
-else 
-  log_info 'Setting JOURNAL_DIR...'
-  _journal_config_dir_set
-fi
+# Dependencies
 
 log_info "Checking dependencies..."
 type gpg pandoc vim > /dev/null 2>&1
@@ -39,4 +20,42 @@ else
   log_info "Dependencies already satisfied"
 fi
 
-log_info "Installation done."
+# ~/.journalrc
+
+if [[ -f ~/.journalrc ]]; then
+  log_info '~/.journalrc already exists'
+  . ~/.journalrc
+else
+  _journal_config_new
+fi
+
+# JOURNAL_DIR
+
+current_dir=$(_journal_config_dir_get)
+if [[ -n "${current_dir}"  ]]; then
+  log_warn 'JOURNAL_DIR already defined'
+  read -p 'Do you want to overwrite JOURNAL_DIR (Y/N)? ' confirm
+
+  if [[ "${confirm,,}" == "y"* ]]; then
+    _journal_config_dir_set
+  else
+    log_info 'JOURNAL_DIR not overwritten'
+  fi
+else 
+  log_info 'Setting JOURNAL_DIR...'
+  _journal_config_dir_set
+fi
+
+# Setting up PATH
+
+log_info 'Checking ~/.bashrc...'
+
+SOURCE_COMMAND='. "$HOME/.journal/bin/journal"'
+if [[ "$(cat ~/.bashrc)" == *"${SOURCE_COMMAND}"* ]]; then
+  log_info '~/.bashrc already set up'
+else
+  log_info "Adding journal function to ~/.bashrc"
+  echo $SOURCE_COMMAND >> ~/.bashrc
+fi
+
+log_info 'Installation done.'

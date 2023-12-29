@@ -1,8 +1,16 @@
-#/bin/bash
+# Check if this file is being sourced
+(return > /dev/null 2>&1)
+if [[ $? -ne 0 ]]; then
+  echo 'Error: this script must be sourced' > /dev/stderr
+  exit 1
+fi
 
-. ~/.journalrc
-for file in $(dirname $0)/../lib/commands/*; do
-  . $file
-done
+journal() {
+  for file in $(dirname $BASH_SOURCE)/../lib/commands/*; do
+    . $file
+  done
 
-"_journal_$1" "${@:2}"
+  . ~/.journalrc
+
+  "_journal_$1" "${@:2}"
+}

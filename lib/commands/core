@@ -10,7 +10,7 @@ shopt -s extglob globstar nullglob
 
 _journal_() {
   cat <<- EOF
-Syntax: $0 <command> <args>
+Syntax: journal <command> <args>
 
 Possible options for <command>:
   new
