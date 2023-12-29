@@ -6,5 +6,5 @@ if [[ $? -ne 0 ]]; then
 fi
 
 journaller() {
-  "$(dirname $BASH_SOURCE)/main" "$@"
+  "$(dirname $BASH_SOURCE)/journaller" "$@"
 }
