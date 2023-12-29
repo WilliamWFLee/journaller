@@ -5,13 +5,27 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-_journaller_autocomplete() {
-  if [[ "${#COMP_WORDS[@]}" != '2' ]]; then
-    return
-  fi
+_journaller_autocomplete_read() {
+  . ~/.journallerrc
+  IFS='\n' local suggestions=($(ls -d $JOURNAL_DIR/*/*/* | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' | sort))
+  COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
+}
 
-  local commands=(help new read copy encrypt config)
-  COMPREPLY=($(compgen -W '${commands[@]}' -- "${COMP_WORDS[1]}"))
+_journaller_autocomplete() {
+  . "$(dirname $BASH_SOURCE)/command_test"
+
+  local num_tokens="${#COMP_WORDS[@]}"
+  case "$num_tokens" in
+  2)
+    local commands=(help new read copy encrypt config)
+    COMPREPLY=($(compgen -W '${commands[@]}' -- "${COMP_WORDS[1]}"))
+    ;;
+  3)
+    local subcommand="${COMP_WORDS[1]}"
+    local subcommand_autocomplete="_journaller_autocomplete_$subcommand"
+    _commands_exists "$subcommand_autocomplete" && "$subcommand_autocomplete"
+    ;;
+  esac
 }
 
 complete -F _journaller_autocomplete journaller

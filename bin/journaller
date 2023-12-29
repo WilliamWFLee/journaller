@@ -5,13 +5,14 @@ for file in $(dirname $BASH_SOURCE)/../lib/commands/*; do
 done
 
 . ~/.journallerrc
+. $(dirname $BASH_SOURCE)/../lib/command_test
+
 command="_journaller_$1"
-type $command > /dev/null 2>&1
-if [[ $? -ne 0 ]]; then
+if _commands_exists $command; then
+  $command "${@:2}"
+else
   if [[ -n "$1" ]]; then
     echo "'$1' is not a journaller command."
   fi
   _journaller_help
-else
-  $command "${@:2}"
 fi

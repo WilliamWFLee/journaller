@@ -1,14 +1,15 @@
 #!/bin/bash
 
 . "$(dirname $0)/../lib/logging"
+. "$(dirname $0)/../lib/command_test"
 . "$(dirname $0)/../lib/commands/config"
 
 # Dependencies
 
 log_info "Checking dependencies..."
-type gpg pandoc vim > /dev/null 2>&1
-
-if [[ $? -ne 0 ]]; then
+if _commands_exists 'gpg pandoc vim'; then
+  log_info "Dependencies already satisfied"
+else
   log_info "Installing missing dependencies using apt..."
   sudo apt install gpg pandoc vim -y --no-install-recommends
 
@@ -16,8 +17,6 @@ if [[ $? -ne 0 ]]; then
     log_error "Dependencies could not be installed; check output"
     exit 1
   fi
-else
-  log_info "Dependencies already satisfied"
 fi
 
 # ~/.journallerrc
