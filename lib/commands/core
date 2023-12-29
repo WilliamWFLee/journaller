@@ -8,7 +8,7 @@ LIB_DIR=$(dirname $BASH_SOURCE)
 
 shopt -s extglob globstar nullglob
 
-_journaller_() {
+_journaller_help() {
   cat <<- EOF
 Syntax: journaller <command> <args>
 
