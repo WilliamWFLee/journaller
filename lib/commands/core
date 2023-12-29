@@ -10,9 +10,9 @@ shopt -s extglob globstar nullglob
 
 _journaller_help() {
   cat <<- EOF
-Syntax: $0 <command> <args>
+Syntax: $0 <subcommand> <args>
 
-Possible options for <command>:
+Possible subcommands:
   new
   read
   copy
