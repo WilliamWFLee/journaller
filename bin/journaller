@@ -8,7 +8,7 @@ done
 . $(dirname $BASH_SOURCE)/../lib/command_test
 
 command="_journaller_$1"
-if _commands_exists $command; then
+if _commands_exist $command; then
   $command "${@:2}"
 else
   if [[ -n "$1" ]]; then

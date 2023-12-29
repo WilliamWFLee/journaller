@@ -6,8 +6,7 @@
 
 # Dependencies
 
-log_info "Checking dependencies..."
-if _commands_exists 'gpg pandoc vim'; then
+if _commands_exist gpg pandoc vim; then
   log_info "Dependencies already satisfied"
 else
   log_info "Installing missing dependencies using apt..."

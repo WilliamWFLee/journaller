@@ -23,7 +23,7 @@ _journaller_autocomplete() {
   3)
     local subcommand="${COMP_WORDS[1]}"
     local subcommand_autocomplete="_journaller_autocomplete_$subcommand"
-    _commands_exists "$subcommand_autocomplete" && "$subcommand_autocomplete"
+    _commands_exist "$subcommand_autocomplete" && "$subcommand_autocomplete"
     ;;
   esac
 }
