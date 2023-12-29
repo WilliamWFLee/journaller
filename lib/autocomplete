@@ -1,0 +1,17 @@
+# Check if this file is being sourced
+(return > /dev/null 2>&1)
+if [[ $? -ne 0 ]]; then
+  echo 'Error: this script must be sourced' > /dev/stderr
+  exit 1
+fi
+
+_journaller_autocomplete() {
+  if [[ "${#COMP_WORDS[@]}" != '2' ]]; then
+    return
+  fi
+
+  local commands=(help new read copy encrypt config)
+  COMPREPLY=($(compgen -W '${commands[@]}' -- "${COMP_WORDS[1]}"))
+}
+
+complete -F _journaller_autocomplete journaller
