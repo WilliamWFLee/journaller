@@ -22,10 +22,10 @@ EOF
 }
 
 _journaller_new() {
-  dir="$JOURNAL_DIR/$(_current_date)"
+  local dir="$JOURNAL_DIR/$(_current_date)"
   mkdir -p "$dir"
 
-  file="$dir/text.md"
+  local file="$dir/text.md"
   echo -ne "**$(_current_time)**\n\n" >> "$file"
   vim "$file"
 
@@ -35,8 +35,8 @@ _journaller_new() {
 }
 
 _journaller_read() {
-  date="${1:-$(_current_date)}"
-  dir="$JOURNAL_DIR/${date//-/\/}"
+  local date="${1:-$(_current_date)}"
+  local dir="$JOURNAL_DIR/${date//-/\/}"
 
   if [[ ! -d $dir ]]; then
     log_error "Journal entry does not exist for $date"
@@ -45,6 +45,7 @@ _journaller_read() {
 
   _read_passphrase 'Enter passphrase: '
 
+  local file
   for file in $dir/*.gpg; do
     _journaller_decrypt_file $file
     case $? in
@@ -92,6 +93,7 @@ _journaller_encrypt() {
     return 1;;
   esac
 
+  local file
   for file in $JOURNAL_DIR/**/!(*.gpg); do
     if [[ -f "$file" && ! -f "$file.gpg" ]]; then 
       log_info "Encrypting and shredding $file" 

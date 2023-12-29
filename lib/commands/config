@@ -20,7 +20,7 @@ _journaller_config_dir() {
 
 _journaller_config_dir_set() {
   log_info "Setting JOURNAL_DIR..."
-  dir="$1"
+  local dir="$1"
   if [[ -z "$dir" ]]; then
     read -p 'Enter path to journal directory [$HOME/journal]? ' dir
   fi
