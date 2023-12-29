@@ -1,0 +1,6 @@
+for file in $(dirname $BASH_SOURCE)/../lib/commands/*; do
+  . $file
+done
+
+. ~/.journallerrc
+"_journaller_$1" "${@:2}"

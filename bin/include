@@ -6,11 +6,5 @@ if [[ $? -ne 0 ]]; then
 fi
 
 journaller() {
-  for file in $(dirname $BASH_SOURCE)/../lib/commands/*; do
-    . $file
-  done
-
-  . ~/.journallerrc
-
-  "_journaller_$1" "${@:2}"
+  "$(dirname $BASH_SOURCE)/main" "$@"
 }
