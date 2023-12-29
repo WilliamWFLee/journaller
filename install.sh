@@ -10,8 +10,8 @@ if [[ $? -ne 0 ]]; then
   echo 'Failed to fetch files from Git repository' > /dev/stderr
   exit 1
 fi
-git reset --hard FETCH_HEAD
-git clean -dfx
+git reset -q --hard FETCH_HEAD
+git clean -q -dfx
 
 echo 'Running setup script...'
 bin/setup
