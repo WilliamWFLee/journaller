@@ -1,32 +1,32 @@
 . "$(dirname $BASH_SOURCE)/../logging"
 . "$(dirname $BASH_SOURCE)/../config"
 
-_journal_config() {
-  "_journal_config_$1" "${@:2}"
+_journaller_config() {
+  "_journaller_config_$1" "${@:2}"
 }
 
-_journal_config_new() {
-  if _journal_config_file_exists; then
-    log_info "~/.journalrc already exists"
+_journaller_config_new() {
+  if _journaller_config_file_exists; then
+    log_info "~/.journallerrc already exists"
   else
-    log_info "Creating ~/.journalrc"
-    touch ~/.journalrc
+    log_info "Creating ~/.journallerrc"
+    touch ~/.journallerrc
   fi
 }
 
-_journal_config_dir() {
-  "_journal_config_dir_$1" "${@:2}"
+_journaller_config_dir() {
+  "_journaller_config_dir_$1" "${@:2}"
 }
 
-_journal_config_dir_set() {
+_journaller_config_dir_set() {
   log_info "Setting JOURNAL_DIR..."
   dir="$1"
   if [[ -z "$dir" ]]; then
     read -p 'Enter path to journal directory [$HOME/journal]? ' dir
   fi
-  _set_journal_dir "${dir:-\$HOME/journal}"
+  _set_journaller_dir "${dir:-\$HOME/journal}"
 }
 
-_journal_config_dir_get() {
-  _get_journal_dir
+_journaller_config_dir_get() {
+  _get_journaller_dir
 }

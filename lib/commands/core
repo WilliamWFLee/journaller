@@ -8,7 +8,7 @@ LIB_DIR=$(dirname $BASH_SOURCE)
 
 shopt -s extglob globstar nullglob
 
-_journal_() {
+_journaller_() {
   cat <<- EOF
 Syntax: journal <command> <args>
 
@@ -21,7 +21,7 @@ Possible options for <command>:
 EOF
 }
 
-_journal_new() {
+_journaller_new() {
   dir="$JOURNAL_DIR/$(_current_date)"
   mkdir -p "$dir"
 
@@ -30,11 +30,11 @@ _journal_new() {
   vim "$file"
 
   if [[ "$@" == *"--encrypt"* ]]; then  
-    _journal_encrypt
+    _journaller_encrypt
   fi
 }
 
-_journal_read() {
+_journaller_read() {
   date="${1:-$(_current_date)}"
   dir="$JOURNAL_DIR/${date//-/\/}"
 
@@ -46,7 +46,7 @@ _journal_read() {
   _read_passphrase 'Enter passphrase: '
 
   for file in $dir/*.gpg; do
-    _journal_decrypt_file $file
+    _journaller_decrypt_file $file
     case $? in
     0)
       log_info "Decrypted $file";;
@@ -65,7 +65,7 @@ _journal_read() {
   log_info "Opening in browser, press <Return> to continue" && read
   log_info "Shredding decrypted files"
   for file in $dir/!(*.gpg); do
-    _journal_shred_file $file
+    _journaller_shred_file $file
     case $? in
     0)
       log_info "Shredded $file";;
@@ -75,11 +75,11 @@ _journal_read() {
   done
 }
 
-_journal_copy() {
+_journaller_copy() {
   rsync -av --modify-window=1 --times --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
 }
 
-_journal_encrypt() {
+_journaller_encrypt() {
   log_info "Encrypting journal..."
 
   _new_passphrase
@@ -95,7 +95,7 @@ _journal_encrypt() {
   for file in $JOURNAL_DIR/**/!(*.gpg); do
     if [[ -f "$file" && ! -f "$file.gpg" ]]; then 
       log_info "Encrypting and shredding $file" 
-      _journal_encrypt_file "$file" "$PASSPHRASE" && _journal_shred_file $file
+      _journaller_encrypt_file "$file" "$PASSPHRASE" && _journaller_shred_file $file
     fi
   done
 }

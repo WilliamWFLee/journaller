@@ -1,20 +1,20 @@
-_journal_config_file_exists() {
-  if [[ -f ~/.journalrc ]]; then
+_journaller_config_file_exists() {
+  if [[ -f ~/.journallerrc ]]; then
     true
   else
     false
   fi
 }
 
-_get_journal_dir() {
-  echo "$(cat ~/.journalrc | sed -n 's/JOURNAL_DIR=\(.*\)/\1/p')"
+_get_journaller_dir() {
+  echo "$(cat ~/.journallerrc | sed -n 's/JOURNAL_DIR=\(.*\)/\1/p')"
 }
 
-_set_journal_dir() {
+_set_journaller_dir() {
 
-  if [[ $(cat ~/.journalrc) = *"JOURNAL_DIR="* ]]; then
-    sed "s,JOURNAL_DIR=.*,JOURNAL_DIR=\"$1\"," -i ~/.journalrc
+  if [[ $(cat ~/.journallerrc) = *"JOURNAL_DIR="* ]]; then
+    sed "s,JOURNAL_DIR=.*,JOURNAL_DIR=\"$1\"," -i ~/.journallerrc
   else
-    echo "JOURNAL_DIR=\"$1\"" >> ~/.journalrc
+    echo "JOURNAL_DIR=\"$1\"" >> ~/.journallerrc
   fi
 }

@@ -1,4 +1,4 @@
-_journal_encrypt_file() {
+_journaller_encrypt_file() {
   if [[ -z "$2" ]]; then 
     gpg -c $1
   else
@@ -6,7 +6,7 @@ _journal_encrypt_file() {
   fi
 }
 
-_journal_decrypt_file() {
+_journaller_decrypt_file() {
   file="$1"
   decrypted_file="${file/.gpg/}"
   if [[ -f "$decrypted_file" ]]; then

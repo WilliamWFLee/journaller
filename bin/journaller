@@ -5,12 +5,12 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-journal() {
+journaller() {
   for file in $(dirname $BASH_SOURCE)/../lib/commands/*; do
     . $file
   done
 
-  . ~/.journalrc
+  . ~/.journallerrc
 
-  "_journal_$1" "${@:2}"
+  "_journaller_$1" "${@:2}"
 }

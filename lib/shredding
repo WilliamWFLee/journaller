@@ -1,4 +1,4 @@
-_journal_shred_file() {
+_journaller_shred_file() {
   file="$1"
   encrypted_file="$file.gpg"
   if [[ ! -f "$encrypted_file" && "$file" != *".html" ]]; then
