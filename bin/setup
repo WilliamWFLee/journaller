@@ -43,7 +43,7 @@ fi
 
 log_info 'Checking ~/.bashrc...'
 
-SOURCE_COMMAND='. "$HOME/.journaller/bin/journaller"'
+SOURCE_COMMAND='if [ -f "$HOME/.journaller/bin/journaller" ] && . "$HOME/.journaller/bin/journaller"'
 if [[ "$(cat ~/.bashrc)" == *"${SOURCE_COMMAND}"* ]]; then
   log_info '~/.bashrc already set up'
 else
