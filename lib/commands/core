@@ -40,7 +40,7 @@ _journaller_read() {
 
   if [[ ! -d $dir ]]; then
     log_error "Journal entry does not exist for $date"
-    exit 1
+    return 1
   fi
 
   _read_passphrase 'Enter passphrase: '
@@ -54,7 +54,7 @@ _journaller_read() {
       log_warn "$file already decrypted, skipping...";;
     2)
       log_error "Failed to decrypt $file, check key"
-      exit 1;;
+      return 1;;
     esac
   done
 
@@ -86,10 +86,10 @@ _journaller_encrypt() {
   case $? in
   1)
     log_error "Passphrase is empty" > /dev/stderr
-    exit 1;;
+    return 1;;
   2)
     log_error "Passphrases do not match" > /dev/stderr
-    exit 1;;
+    return 1;;
   esac
 
   for file in $JOURNAL_DIR/**/!(*.gpg); do
