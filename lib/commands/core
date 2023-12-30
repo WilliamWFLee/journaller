@@ -25,11 +25,11 @@ _journaller_new() {
 }
 
 _journaller_read() {
-  local date="${1:-$(_current_date)}"
-  local dir="$JOURNAL_DIR/${date//-/\/}"
+  local date="$(echo ${1:-$(_current_date)} | _date_to_path)"
+  local dir="$JOURNAL_DIR/$date"
 
   if [[ ! -d $dir ]]; then
-    log_error "Journal entry does not exist for $date"
+    log_error "Journal entry does not exist for $(echo $date | _path_to_date)"
     return 1
   fi
 

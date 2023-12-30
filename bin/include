@@ -5,7 +5,9 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-. "$(dirname $BASH_SOURCE)/../lib/_autocomplete"
+for file in $(dirname $BASH_SOURCE)/../lib/autocomplete/**; do
+  [[ -f $file ]] && . $file
+done
 
 journaller() {
   "$(dirname $BASH_SOURCE)/journaller" "$@"

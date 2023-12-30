@@ -5,3 +5,11 @@ _current_date() {
 _current_time() {
   date +'%H:%M'
 }
+
+_path_to_date() {
+  sed 's,/,-,g'
+}
+
+_date_to_path() {
+  sed 's,-,/,g'
+}

@@ -1,0 +1,5 @@
+_get_all_entry_dates() {
+  ls -d $JOURNAL_DIR/*/*/* \
+  | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' \
+  | _path_to_date
+}

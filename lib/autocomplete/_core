@@ -1,12 +1,14 @@
+. "$(dirname $BASH_SOURCE)/../entries"
+. "$(dirname $BASH_SOURCE)/../date"
+. "$(dirname $BASH_SOURCE)/../command_test"
+
 _journaller_autocomplete_read() {
   . ~/.journallerrc
-  IFS='\n' local suggestions=($(ls -d $JOURNAL_DIR/*/*/* | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' | sort))
+  IFS='\n' local suggestions=($(_get_all_entry_dates | sort))
   COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
 }
 
 _journaller_autocomplete() {
-  . "$(dirname $BASH_SOURCE)/command_test"
-
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)
