@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . "$(dirname $0)/../lib/logging"
+. "$(dirname $0)/../lib/config"
 . "$(dirname $0)/../lib/command_test"
 . "$(dirname $0)/../lib/commands/config"
 
