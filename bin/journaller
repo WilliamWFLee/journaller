@@ -1,11 +1,12 @@
 #!/bin/bash
 
-for file in $(dirname $BASH_SOURCE)/../lib/commands/*; do
-  . $file
+shopt -s extglob globstar nullglob
+
+for file in $(dirname $0)/../lib/**/!(_*); do
+  [[ -f $file ]] && . $file
 done
 
 . ~/.journallerrc
-. $(dirname $BASH_SOURCE)/../lib/command_test
 
 command="_journaller_$1"
 if _commands_exist $command; then

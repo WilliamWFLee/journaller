@@ -1,13 +1,3 @@
-LIB_DIR=$(dirname $BASH_SOURCE)
-
-. "$LIB_DIR/../logging"
-. "$LIB_DIR/../date"
-. "$LIB_DIR/../shredding"
-. "$LIB_DIR/../encryption"
-. "$LIB_DIR/../passphrase"
-
-shopt -s extglob globstar nullglob
-
 _journaller_help() {
   cat <<- EOF
 Syntax: $0 <subcommand> <args>
