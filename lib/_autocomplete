@@ -1,10 +1,3 @@
-# Check if this file is being sourced
-(return > /dev/null 2>&1)
-if [[ $? -ne 0 ]]; then
-  echo 'Error: this script must be sourced' > /dev/stderr
-  exit 1
-fi
-
 _journaller_autocomplete_read() {
   . ~/.journallerrc
   IFS='\n' local suggestions=($(ls -d $JOURNAL_DIR/*/*/* | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' | sort))
