@@ -4,7 +4,8 @@
 
 _journaller_autocomplete_read() {
   . ~/.journallerrc
-  IFS='\n' local suggestions=($(_get_all_entry_dates | sort))
+  local suggestions=('today' 'latest')
+  IFS=$'\n' suggestions+=($(_get_all_entry_dates | sort))
   COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
 }
 

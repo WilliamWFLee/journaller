@@ -3,3 +3,7 @@ _get_all_entry_dates() {
   | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' \
   | _path_to_date
 }
+
+_get_latest_entry_date() {
+  _get_all_entry_dates | sort | tail -n1
+}

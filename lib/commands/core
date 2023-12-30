@@ -25,14 +25,25 @@ _journaller_new() {
 }
 
 _journaller_read() {
-  local date="$(echo ${1:-$(_current_date)} | _date_to_path)"
-  local dir="$JOURNAL_DIR/$date"
+  case "$1" in
+  today)
+    date=$(_current_date)
+    ;;
+  '')
+    ;&
+  latest)
+    date=$(_get_latest_entry_date)
+
+  esac
+  local dir="$JOURNAL_DIR/$(echo $date | _date_to_path)"
 
   if [[ ! -d $dir ]]; then
     log_error "Journal entry does not exist for $(echo $date | _path_to_date)"
     return 1
   fi
 
+  log_info "Opening journal entry for $date"
+  log_info "Requesting passphrase to decrypt journal entry"
   _read_passphrase 'Enter passphrase: '
 
   local file
