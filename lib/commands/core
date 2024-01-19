@@ -29,11 +29,13 @@ _journaller_read() {
   today)
     date=$(_current_date)
     ;;
-  '')
-    ;&
   latest)
+    ;&
+  '')
     date=$(_get_latest_entry_date)
-
+    ;;
+  *)
+    date=$1
   esac
   local dir="$JOURNAL_DIR/$(echo $date | _date_to_path)"
 
@@ -59,7 +61,6 @@ _journaller_read() {
       return 1;;
     esac
   done
-
 
   pandoc -f markdown -t html $dir/text.md > $dir/text.html
   open $dir/text.html 2> /dev/null

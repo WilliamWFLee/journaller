@@ -12,18 +12,9 @@ _journaller_config_new() {
 }
 
 _journaller_config_dir() {
-  "_journaller_config_dir_$1" "${@:2}"
-}
-
-_journaller_config_dir_set() {
-  log_info "Setting JOURNAL_DIR..."
-  local dir="$1"
-  if [[ -z "$dir" ]]; then
-    read -p 'Enter path to journal directory [$HOME/journal]? ' dir
+  if [[ -z "$1" ]]; then
+    _get_journaller_dir
+  else
+    _set_journaller_dir "$1"
   fi
-  _set_journaller_dir "${dir:-\$HOME/journal}"
-}
-
-_journaller_config_dir_get() {
-  _get_journaller_dir
 }
