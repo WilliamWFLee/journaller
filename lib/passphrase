@@ -1,7 +1,7 @@
 _read_passphrase() {
   local prompt="${1:-Enter passphrase}"
   local var="${2:-PASSPHRASE}"
-  read -rsp "$prompt" "$var" && echo
+  read -rsp "$prompt" "$var"; echo
 }
 
 _new_passphrase() {
