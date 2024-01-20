@@ -7,7 +7,7 @@ _get_journaller_dir() {
 }
 
 _set_journaller_dir() {
-  if [[ $(cat ~/.journallerrc) = *"JOURNAL_DIR="* ]]; then
+  if _journaller_config_file_exists && [[ $(cat ~/.journallerrc) = *"JOURNAL_DIR="* ]]; then
     sed "s,JOURNAL_DIR=.*,JOURNAL_DIR=\"$1\"," -i ~/.journallerrc
   else
     echo "JOURNAL_DIR=\"$1\"" >> ~/.journallerrc

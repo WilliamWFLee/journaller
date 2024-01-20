@@ -6,7 +6,7 @@ for file in $(dirname $0)/../lib/**/!(_*); do
   [[ -f $file ]] && . $file
 done
 
-. ~/.journallerrc
+_journaller_config_file_exists && . ~/.journallerrc
 
 command="_journaller_$1"
 if _commands_exist $command; then
