@@ -1,9 +1,5 @@
 _journaller_config_file_exists() {
-  if [[ -f ~/.journallerrc ]]; then
-    true
-  else
-    false
-  fi
+  [[ -f ~/.journallerrc ]];
 }
 
 _get_journaller_dir() {
