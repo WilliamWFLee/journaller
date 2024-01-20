@@ -53,12 +53,15 @@ _journaller_read() {
     _journaller_decrypt_file $file
     case $? in
     0)
-      log_info "Decrypted $file";;
+      log_info "Decrypted $file"
+      ;;
     1)
-      log_warn "$file already decrypted, skipping...";;
+      log_warn "$file already decrypted, skipping..."
+      ;;
     2)
       log_error "Failed to decrypt $file, check key"
-      return 1;;
+      return 1
+      ;;
     esac
   done
 
@@ -71,9 +74,11 @@ _journaller_read() {
     _journaller_shred_file $file
     case $? in
     0)
-      log_info "Shredded $file";;
+      log_info "Shredded $file"
+      ;;
     1)
-      log_warn "$file was skipped as it was not encrypted";;
+      log_warn "$file was skipped as it was not encrypted"
+      ;;
     esac
   done
 }
@@ -89,10 +94,12 @@ _journaller_encrypt() {
   case $? in
   1)
     log_error "Passphrase is empty" > /dev/stderr
-    return 1;;
+    return 1
+    ;;
   2)
     log_error "Passphrases do not match" > /dev/stderr
-    return 1;;
+    return 1
+    ;;
   esac
 
   local file
