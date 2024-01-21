@@ -1,9 +1,9 @@
-_journaller_config() {
-  "_journaller_config_$1" "${@:2}"
+cmd_config() {
+  "config_$1" "${@:2}"
 }
 
-_journaller_config_new() {
-  if _journaller_config_file_exists; then
+config_new() {
+  if config_file_exists; then
     log_info "~/.journallerrc already exists"
   else
     log_info "Creating ~/.journallerrc"
@@ -11,10 +11,10 @@ _journaller_config_new() {
   fi
 }
 
-_journaller_config_dir() {
+config_dir() {
   if [[ -z "$1" ]]; then
-    _get_journaller_dir
+    get_dir
   else
-    _set_journaller_dir "$1"
+    set_dir "$1"
   fi
 }

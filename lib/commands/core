@@ -1,4 +1,4 @@
-_journaller_help() {
+cmd_help() {
   cat <<- EOF
 Syntax: $0 <subcommand> <args>
 
@@ -12,33 +12,33 @@ Possible subcommands:
 EOF
 }
 
-_journaller_new() {
-  local dir="$JOURNAL_DIR/$(_current_date)"
+cmd_new() {
+  local dir="$JOURNAL_DIR/$(current_date)"
   mkdir -p "$dir"
 
   local file="$dir/text.md"
-  echo -ne "**$(_current_time)**\n\n" >> "$file"
+  echo -ne "**$(current_time)**\n\n" >> "$file"
   vim "$file"
 
   if [[ "$@" == *"--encrypt"* ]]; then  
-    _journaller_encrypt
+    encrypt
   fi
 }
 
-_journaller_read() {
-  local date=$(_interpret_entry_date_text $1)
-  local dir="$JOURNAL_DIR/$(echo $date | _date_to_path)"
+cmd_read() {
+  local date=$(interpret_entry_date_text $1)
+  local dir="$JOURNAL_DIR/$(echo $date | date_to_path)"
 
   if [[ ! -d $dir ]]; then
-    log_error "Journal entry does not exist for $(echo $date | _path_to_date)"
+    log_error "Journal entry does not exist for $(echo $date | path_to_date)"
     return 1
   fi
 
   log_info "Opening journal entry for $date"
   log_info "Requesting passphrase to decrypt journal entry"
-  _read_passphrase 'Enter passphrase: '
+  read_passphrase 'Enter passphrase: '
 
-  _journaller_decrypt_dir $dir
+  decrypt_dir $dir
 
   pandoc -f markdown -t html $dir/text.md > $dir/text.html
   open $dir/text.html 2> /dev/null
@@ -46,17 +46,17 @@ _journaller_read() {
   log_info "Opening in browser, press <Return> to continue" && read
   log_info "Shredding decrypted files"
 
-  _journaller_shred_unencrypted_entry $dir
+  shred_unencrypted_entry $dir
 }
 
-_journaller_copy() {
+cmd_copy() {
   rsync -av --modify-window=1 --times --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
 }
 
-_journaller_encrypt() {
+cmd_encrypt() {
   log_info "Encrypting journal..."
 
-  _new_passphrase
+  new_passphrase
   case $? in
   1)
     log_error "Passphrase is empty" > /dev/stderr
@@ -72,7 +72,7 @@ _journaller_encrypt() {
   for file in $JOURNAL_DIR/**/!(*.gpg); do
     if [[ -f "$file" && ! -f "$file.gpg" ]]; then 
       log_info "Encrypting and shredding $file" 
-      _journaller_encrypt_file "$file" "$PASSPHRASE" && _journaller_shred_file $file
+      encrypt_file "$file" "$PASSPHRASE" && shred_file $file
     fi
   done
 }

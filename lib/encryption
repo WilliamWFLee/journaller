@@ -1,4 +1,4 @@
-_journaller_encrypt_file() {
+encrypt_file() {
   if [[ -z "$2" ]]; then 
     gpg -c $1
   else
@@ -6,7 +6,7 @@ _journaller_encrypt_file() {
   fi
 }
 
-_journaller_decrypt_file() {
+decrypt_file() {
   file="$1"
   decrypted_file="${file/.gpg/}"
   if [[ -f "$decrypted_file" ]]; then
@@ -19,10 +19,10 @@ _journaller_decrypt_file() {
   fi
 }
 
-_journaller_decrypt_dir() {
+decrypt_dir() {
   local file
   for file in $1/*.gpg; do
-    _journaller_decrypt_file $file
+    decrypt_file $file
     case $? in
     0)
       log_info "Decrypted $file"

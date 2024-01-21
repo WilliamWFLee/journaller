@@ -1,17 +1,17 @@
-_read_passphrase() {
+read_passphrase() {
   local prompt="${1:-Enter passphrase}"
   local var="${2:-PASSPHRASE}"
   read -rsp "$prompt" "$var"; echo
 }
 
-_new_passphrase() {
-  _read_passphrase 'Enter passphrase: '
+new_passphrase() {
+  read_passphrase 'Enter passphrase: '
   if [[ -z "${PASSPHRASE}" ]]; then
     return 1
   fi
 
   local PASSPHRASE_CONFIRMATION
-  _read_passphrase 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION
+  read_passphrase 'Confirm passphrase: ' PASSPHRASE_CONFIRMATION
   if [[ "${PASSPHRASE}" != "${PASSPHRASE_CONFIRMATION}" ]]; then
     return 2
   fi

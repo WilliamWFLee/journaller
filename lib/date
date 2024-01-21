@@ -1,15 +1,15 @@
-_current_date() {
+current_date() {
   date +'%Y/%m/%d'
 }
 
-_current_time() {
+current_time() {
   date +'%H:%M'
 }
 
-_path_to_date() {
+path_to_date() {
   sed 's,/,-,g'
 }
 
-_date_to_path() {
+date_to_path() {
   sed 's,-,/,g'
 }

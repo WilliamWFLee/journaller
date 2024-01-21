@@ -6,14 +6,14 @@ for file in $(dirname $0)/../lib/**/!(_*); do
   [[ -f $file ]] && . $file
 done
 
-_journaller_config_file_exists && . ~/.journallerrc
+config_file_exists && . ~/.journallerrc
 
-command="_journaller_$1"
-if _commands_exist $command; then
+command="cmd_$1"
+if commands_exist $command; then
   $command "${@:2}"
 else
   if [[ -n "$1" ]]; then
     echo "'$1' is not a journaller command."
   fi
-  _journaller_help
+  help
 fi

@@ -2,16 +2,16 @@
 . "$(dirname $BASH_SOURCE)/../date"
 . "$(dirname $BASH_SOURCE)/../command_test"
 
-_journaller_autocomplete_read() {
+autocomplete_read() {
   [[ $num_tokens -gt 3 ]] && return
 
   . ~/.journallerrc
   local suggestions=('today' 'latest')
-  IFS=$'\n' suggestions+=($(_get_all_entry_dates))
+  IFS=$'\n' suggestions+=($(get_all_entry_dates))
   COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
 }
 
-_journaller_autocomplete_config() {
+autocomplete_config() {
   case $num_tokens in
   3)
     COMPREPLY=('dir')
@@ -19,7 +19,7 @@ _journaller_autocomplete_config() {
   esac
 }
 
-_journaller_autocomplete() {
+autocomplete() {
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)
@@ -28,8 +28,8 @@ _journaller_autocomplete() {
     ;;
   *)
     local subcommand="${COMP_WORDS[1]}"
-    local subcommand_autocomplete="_journaller_autocomplete_$subcommand"
-    if _commands_exist "$subcommand_autocomplete"; then
+    local subcommand_autocomplete="autocomplete_$subcommand"
+    if commands_exist "$subcommand_autocomplete"; then
       "$subcommand_autocomplete"
     else
       return
@@ -38,4 +38,4 @@ _journaller_autocomplete() {
   esac
 }
 
-complete -o dirnames -F _journaller_autocomplete journaller
+complete -o dirnames -F autocomplete journaller

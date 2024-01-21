@@ -1,22 +1,22 @@
-_get_all_entry_dates() {
+get_all_entry_dates() {
   ls -d $JOURNAL_DIR/*/*/* \
   | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' \
-  | _path_to_date
+  | path_to_date
 }
 
-_get_latest_entry_date() {
-  _get_all_entry_dates | sort | tail -n1
+get_latest_entry_date() {
+  get_all_entry_dates | sort | tail -n1
 }
 
-_interpret_entry_date_text() {
+interpret_entry_date_text() {
   case "$1" in
   today)
-    _current_date
+    current_date
     ;;
   latest)
     ;&
   '')
-    _get_latest_entry_date
+    get_latest_entry_date
     ;;
   *)
     echo $1

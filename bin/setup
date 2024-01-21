@@ -7,7 +7,7 @@
 
 # Dependencies
 
-if _commands_exist gpg pandoc vim; then
+if commands_exist gpg pandoc vim; then
   log_info "Dependencies already satisfied"
 else
   log_info "Installing missing dependencies using apt..."
@@ -25,17 +25,17 @@ if [[ -f ~/.journallerrc ]]; then
   log_info '~/.journallerrc already exists'
   . ~/.journallerrc
 else
-  _journaller_config_new
+  config_new
 fi
 
 # JOURNAL_DIR
 
-current_dir=$(_journaller_config_dir)
+current_dir=$(config_dir)
 if [[ -n "${current_dir}"  ]]; then
   log_warn 'JOURNAL_DIR already defined'
 else 
   log_info 'Setting JOURNAL_DIR...'
-  _journaller_config_dir '$HOME/journal'
+  config_dir '$HOME/journal'
 fi
 
 # Setting up PATH
