@@ -3,11 +3,12 @@ _journaller_help() {
 Syntax: $0 <subcommand> <args>
 
 Possible subcommands:
-  new
-  read
-  copy
-  encrypt
-  config
+  new       write a new entry
+  read      read journal entries
+  copy      copy the entire journal to another directory
+  encrypt   encrypt any unencrypted entries
+  config    configure journaller
+  help      display this help
 EOF
 }
 
