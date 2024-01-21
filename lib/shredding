@@ -1,8 +1,22 @@
-_journaller_shred_file() {
+_journaller_shred_unencrypted_file() {
   local file="$1"
   local encrypted_file="$file.gpg"
   if [[ ! -f "$encrypted_file" && "$file" != *".html" ]]; then
     return 1
   fi
   shred -xun 3 $file
+}
+
+_journaller_shred_unencrypted_entry() {
+  for file in $1/!(*.gpg); do
+    _journaller_shred_unencrypted_file $file
+    case $? in
+    0)
+      log_info "Shredded $file"
+      ;;
+    1)
+      log_warn "$file was skipped as it was not encrypted"
+      ;;
+    esac
+  done
 }

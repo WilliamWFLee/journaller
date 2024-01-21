@@ -18,3 +18,22 @@ _journaller_decrypt_file() {
     return 2
   fi
 }
+
+_journaller_decrypt_dir() {
+  local file
+  for file in $1/*.gpg; do
+    _journaller_decrypt_file $file
+    case $? in
+    0)
+      log_info "Decrypted $file"
+      ;;
+    1)
+      log_warn "$file already decrypted, skipping..."
+      ;;
+    2)
+      log_error "Failed to decrypt $file, check key"
+      return 1
+      ;;
+    esac
+  done
+}

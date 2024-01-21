@@ -38,39 +38,15 @@ _journaller_read() {
   log_info "Requesting passphrase to decrypt journal entry"
   _read_passphrase 'Enter passphrase: '
 
-  local file
-  for file in $dir/*.gpg; do
-    _journaller_decrypt_file $file
-    case $? in
-    0)
-      log_info "Decrypted $file"
-      ;;
-    1)
-      log_warn "$file already decrypted, skipping..."
-      ;;
-    2)
-      log_error "Failed to decrypt $file, check key"
-      return 1
-      ;;
-    esac
-  done
+  _journaller_decrypt_dir $dir
 
   pandoc -f markdown -t html $dir/text.md > $dir/text.html
   open $dir/text.html 2> /dev/null
 
   log_info "Opening in browser, press <Return> to continue" && read
   log_info "Shredding decrypted files"
-  for file in $dir/!(*.gpg); do
-    _journaller_shred_file $file
-    case $? in
-    0)
-      log_info "Shredded $file"
-      ;;
-    1)
-      log_warn "$file was skipped as it was not encrypted"
-      ;;
-    esac
-  done
+
+  _journaller_shred_unencrypted_entry $dir
 }
 
 _journaller_copy() {
