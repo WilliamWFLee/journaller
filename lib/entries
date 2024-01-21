@@ -7,3 +7,18 @@ _get_all_entry_dates() {
 _get_latest_entry_date() {
   _get_all_entry_dates | sort | tail -n1
 }
+
+_interpret_entry_date_text() {
+  case "$1" in
+  today)
+    _current_date
+    ;;
+  latest)
+    ;&
+  '')
+    _get_latest_entry_date
+    ;;
+  *)
+    echo $1
+  esac
+}

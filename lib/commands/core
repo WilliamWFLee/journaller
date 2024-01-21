@@ -26,18 +26,7 @@ _journaller_new() {
 }
 
 _journaller_read() {
-  case "$1" in
-  today)
-    date=$(_current_date)
-    ;;
-  latest)
-    ;&
-  '')
-    date=$(_get_latest_entry_date)
-    ;;
-  *)
-    date=$1
-  esac
+  local date=$(_interpret_entry_date_text $1)
   local dir="$JOURNAL_DIR/$(echo $date | _date_to_path)"
 
   if [[ ! -d $dir ]]; then
