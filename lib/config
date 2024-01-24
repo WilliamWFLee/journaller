@@ -2,14 +2,23 @@ config_file_exists() {
   [[ -f ~/.journallerrc ]];
 }
 
-get_dir() {
-  echo "$(cat ~/.journallerrc | sed -n 's/JOURNAL_DIR=\(.*\)/\1/p')"
+create_config_file() {
+  if config_file_exists; then
+    false
+  else
+    touch ~/.journallerrc
+    true
+  fi
 }
 
-set_dir() {
-  if config_file_exists && [[ $(cat ~/.journallerrc) = *"JOURNAL_DIR="* ]]; then
-    sed "s,JOURNAL_DIR=.*,JOURNAL_DIR=\"$1\"," -i ~/.journallerrc
+get_config_key() {
+  echo "$(cat ~/.journallerrc | sed -n "s/JOURNAL_${1^^}=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
+}
+
+set_config_key() {
+  if config_file_exists && [[ $(cat ~/.journallerrc) = *"JOURNAL_${1^^}="* ]]; then
+    sed "s,JOURNAL_${1^^}=.*,JOURNAL_${1^^}=\"$2\"," -i ~/.journallerrc
   else
-    echo "JOURNAL_DIR=\"$1\"" >> ~/.journallerrc
+    echo "JOURNAL_${1^^}=\"$2\"" >> ~/.journallerrc
   fi
 }

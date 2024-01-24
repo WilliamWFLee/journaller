@@ -76,3 +76,23 @@ cmd_encrypt() {
     fi
   done
 }
+
+cmd_config() {
+  case $1 in
+  new)
+    if create_config_file; then
+      log_info "~/.journallerrc created"
+    else
+      log_info "~/.journallerrc already exists"
+    fi
+    ;;
+  *)
+    local config_key="$1"
+    local config_value="$2"
+    if [[ -z "$config_value" ]]; then
+      get_config_key "$config_key"
+    else
+      set_config_key "$config_key" "$config_value"
+    fi
+  esac
+}
