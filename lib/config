@@ -16,9 +16,11 @@ get_config_key() {
 }
 
 set_config_key() {
-  if config_file_exists && [[ $(cat ~/.journallerrc) = *"JOURNAL_${1^^}="* ]]; then
-    sed "s,JOURNAL_${1^^}=.*,JOURNAL_${1^^}=\"$2\"," -i ~/.journallerrc
+  local config_key="JOURNAL_${1^^}"
+  local config_value="${2/#~/\$HOME}"
+  if config_file_exists && [[ $(cat ~/.journallerrc) = *"$config_key="* ]]; then
+    sed "s,$config_key=.*,$config_key=\"$config_value\"," -i ~/.journallerrc
   else
-    echo "JOURNAL_${1^^}=\"$2\"" >> ~/.journallerrc
+    echo "$config_key=\"$config_value\"" >> ~/.journallerrc
   fi
 }
