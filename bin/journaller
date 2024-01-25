@@ -15,5 +15,5 @@ else
   if [[ -n "$1" ]]; then
     echo "'$1' is not a journaller command."
   fi
-  help
+  cmd_help
 fi
