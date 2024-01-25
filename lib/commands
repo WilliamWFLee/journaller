@@ -26,15 +26,14 @@ cmd_new() {
 }
 
 cmd_read() {
-  local date=$(interpret_entry_date_text $1)
-  local dir="$JOURNAL_DIR/$(echo $date | date_to_path)"
+  local dir=$(get_entry_dir_from_date_text $1)
 
-  if [[ ! -d $dir ]]; then
-    log_error "Journal entry does not exist for $(echo $date | path_to_date)"
+  if [[ -z $dir ]]; then
+    log_error "Journal entry does not exist for $(echo $1 | path_to_date)"
     return 1
   fi
 
-  log_info "Opening journal entry for $date"
+  log_info "Opening journal entry"
   log_info "Requesting passphrase to decrypt journal entry"
   read_passphrase 'Enter passphrase: '
 
