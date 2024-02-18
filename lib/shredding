@@ -7,9 +7,9 @@ shred_unencrypted_file() {
   shred -xun 3 $file
 }
 
-shred_unencrypted_entry() {
+shred_unencrypted_files_current_dir() {
   local file
-  for file in $1/!(*.gpg); do
+  for file in $CURRENT_ENTRY_DIR/!(*.gpg); do
     shred_unencrypted_file $file
     case $? in
     0)

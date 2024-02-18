@@ -13,39 +13,39 @@ EOF
 }
 
 cmd_new() {
-  local dir="$JOURNAL_DIR/$(current_date)"
-  mkdir -p "$dir"
+  set_new_entry "$(current_date)"
+  mkdir -p "$CURRENT_ENTRY_DIR"
 
-  local file="$dir/text.md"
+  local file="$CURRENT_ENTRY_DIR/text.md"
   echo -ne "**$(current_time)**\n\n" >> "$file"
   vim "$file"
-
-  if [[ "$@" == *"--encrypt"* ]]; then  
-    encrypt
-  fi
 }
 
-cmd_read() {
-  local dir=$(get_entry_dir_from_date_text $1)
 
-  if [[ -z $dir ]]; then
-    log_error "Journal entry does not exist for $(echo $1 | path_to_date)"
+
+cmd_read() {
+  set_current_entry_from_date_text $1
+  if [[ $? -eq 1 ]]; then
+    log_error "Journal entry directory does not exist for $(echo $1 | path_to_date)"
+    return 1
+  elif [[ $? -eq 2 ]]; then
+    log_error "Root document not found in journal entry $(echo $1 | path_to_date)"
     return 1
   fi
 
   log_info "Opening journal entry"
   log_info "Requesting passphrase to decrypt journal entry"
-  read_passphrase 'Enter passphrase: '
+  read_passphrase
 
-  decrypt_dir $dir
+  decrypt_dir
 
-  pandoc -f markdown -t html $dir/text.md > $dir/text.html
-  open $dir/text.html 2> /dev/null
+  pandoc -f markdown -t html $CURRENT_ENTRY_DIR/text.md > $CURRENT_ENTRY_DIR/text.html
+  open $CURRENT_ENTRY_DIR/text.html 2> /dev/null
 
   log_info "Opening in browser, press <Return> to continue" && read
   log_info "Shredding decrypted files"
 
-  shred_unencrypted_entry $dir
+  shred_unencrypted_files_current_dir
 }
 
 cmd_copy() {

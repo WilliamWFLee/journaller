@@ -19,9 +19,9 @@ decrypt_file() {
   fi
 }
 
-decrypt_dir() {
+decrypt_current_dir() {
   local file
-  for file in $1/*.gpg; do
+  for file in $CURRENT_ENTRY_DIR/*.gpg; do
     decrypt_file $file
     case $? in
     0)
