@@ -20,10 +20,10 @@ _journaller_config() {
 }
 
 _journaller() {
+  local commands=(help new read copy encrypt config)
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)
-    local commands=(help new read copy encrypt config)
     COMPREPLY=($(compgen -W '${commands[@]}' -- "${COMP_WORDS[1]}"))
     ;;
   *)

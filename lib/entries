@@ -24,7 +24,7 @@ interpret_date_text() {
 }
 
 get_entry_dir_from_date_text() {
-  date=$(interpret_date_text $1)
+  local date=$(interpret_date_text $1)
   local dir="$JOURNAL_DIR/$(echo $date | date_to_path)"
   if [[ -d "$dir" ]]; then
     echo $dir

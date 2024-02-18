@@ -8,6 +8,7 @@ shred_unencrypted_file() {
 }
 
 shred_unencrypted_entry() {
+  local file
   for file in $1/!(*.gpg); do
     shred_unencrypted_file $file
     case $? in

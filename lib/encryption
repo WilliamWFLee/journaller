@@ -7,8 +7,8 @@ encrypt_file() {
 }
 
 decrypt_file() {
-  file="$1"
-  decrypted_file="${file/.gpg/}"
+  local file="$1"
+  local decrypted_file="${file/.gpg/}"
   if [[ -f "$decrypted_file" ]]; then
     return 1
   fi
