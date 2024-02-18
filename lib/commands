@@ -21,8 +21,6 @@ cmd_new() {
   vim "$file"
 }
 
-
-
 cmd_read() {
   set_current_entry_from_date_text $1
   if [[ $? -eq 1 ]]; then
@@ -37,7 +35,8 @@ cmd_read() {
   log_info "Requesting passphrase to decrypt journal entry"
   read_passphrase
 
-  decrypt_dir
+  decrypt_current_dir
+  [[ $? -ne 0 ]] && return 1
 
   pandoc -f markdown -t html $CURRENT_ENTRY_DIR/text.md > $CURRENT_ENTRY_DIR/text.html
   open $CURRENT_ENTRY_DIR/text.html 2> /dev/null
