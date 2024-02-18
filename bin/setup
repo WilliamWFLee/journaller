@@ -1,9 +1,11 @@
 #!/bin/bash
 
+shopt -s extglob globstar nullglob
+
 . "$(dirname $0)/../lib/logging"
 . "$(dirname $0)/../lib/config"
+. "$(dirname $0)/../lib/commands"
 . "$(dirname $0)/../lib/command_test"
-. "$(dirname $0)/../lib/commands/config"
 
 # Dependencies
 
@@ -30,12 +32,12 @@ fi
 
 # JOURNAL_DIR
 
-current_dir=$(config_dir)
+current_dir=$(cmd_config dir)
 if [[ -n "${current_dir}"  ]]; then
   log_warn 'JOURNAL_DIR already defined'
 else 
   log_info 'Setting JOURNAL_DIR...'
-  config_dir '$HOME/journal'
+  cmd_config dir '$HOME/journal'
 fi
 
 # Setting up PATH
