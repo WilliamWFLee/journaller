@@ -1,6 +1,6 @@
 cmd_help() {
   cat <<- EOF
-Syntax: $0 <subcommand> <args>
+Syntax: ${JOURNALLER_COMMAND:-$0} <subcommand> <args>
 
 Possible subcommands:
   new       write a new entry

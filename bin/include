@@ -8,5 +8,5 @@ fi
 . $(dirname $BASH_SOURCE)/../lib/_autocomplete
 
 journaller() {
-  "$(dirname $BASH_SOURCE)/journaller" "$@"
+  JOURNALLER_COMMAND="journaller" "$(dirname $BASH_SOURCE)/journaller" "$@"
 }
