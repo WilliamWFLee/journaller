@@ -9,11 +9,11 @@ shopt -s extglob globstar nullglob
 
 # Dependencies
 
-if commands_exist gpg pandoc vim; then
+if commands_exist gpg pandoc vim keyring; then
   log_info "Dependencies already satisfied"
 else
   log_info "Installing missing dependencies using apt..."
-  sudo apt install gpg pandoc vim -y --no-install-recommends
+  sudo apt install gpg pandoc vim python3-keyring -y --no-install-recommends
 
   if [[ $? -ne 0 ]]; then
     log_error "Dependencies could not be installed; check output"
