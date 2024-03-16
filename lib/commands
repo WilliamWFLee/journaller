@@ -62,11 +62,11 @@ cmd_encrypt() {
   fi
   case $? in
   1)
-    log_error "Passphrase is empty" > /dev/stderr
+    log_error "Passphrase is empty"
     return 1
     ;;
   2)
-    log_error "Passphrases do not match" > /dev/stderr
+    log_error "Passphrases do not match"
     return 1
     ;;
   esac
@@ -102,8 +102,11 @@ cmd_config() {
 
 cmd_new_passphrase() {
   if keyring_enabled; then
-    set_and_save_new_passphrase
-    log_info "Password successfully changed and saved to keyring"
+    if set_and_save_new_passphrase; then
+      log_info "Password successfully changed and saved to keyring"
+    else
+      log_error "Password was not updated"
+    fi
   else
     log_error "Keyring usage has been disabled"
     log_error "To enable, run 'journaller config use-keyring on'"

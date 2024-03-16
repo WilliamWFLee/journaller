@@ -1,6 +1,6 @@
 INFO="\033[32m[Info] \033[0m"
 WARN="\033[33m[Warn] \033[0m"
-ERROR="\033[31m[Error]  \033[0m"
+ERROR="\033[31m[Error]\033[0m"
 
 log_info() {
   echo -e "$INFO ${@}"

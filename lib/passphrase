@@ -32,8 +32,13 @@ retrieve_or_read_passphrase() {
 }
 
 set_and_save_new_passphrase() {
-  new_passphrase
-  save_passphrase_to_keyring
+  if new_passphrase; then
+    save_passphrase_to_keyring
+    return 0
+  else
+    log_error 'Password not entered, or do not match'
+    return 1
+  fi
 }
 
 keyring_enabled() {
