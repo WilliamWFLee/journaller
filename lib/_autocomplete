@@ -12,11 +12,10 @@ _journaller_read() {
 }
 
 _journaller_config() {
-  case $num_tokens in
-  3)
-    COMPREPLY=('dir')
-    ;;
-  esac
+  [[ $num_tokens -gt 3 ]] && return
+
+  local config_keys=('dir' 'use-keyring')
+  COMPREPLY=($(compgen -W '${config_keys[@]}' -- "${COMP_WORDS[2]}"))
 }
 
 _journaller() {
