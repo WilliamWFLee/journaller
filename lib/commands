@@ -32,8 +32,8 @@ cmd_read() {
   fi
 
   log_info "Opening journal entry"
-  log_info "Requesting passphrase to decrypt journal entry"
-  read_passphrase
+  log_info "Retrieving passphrase to decrypt journal entry"
+  retrieve_or_read_passphrase
 
   decrypt_current_dir
   [[ $? -ne 0 ]] && return 1
@@ -54,7 +54,11 @@ cmd_copy() {
 cmd_encrypt() {
   log_info "Encrypting journal..."
 
-  new_passphrase
+  if keyring_enabled; then
+    retrieve_or_read_passphrase
+  else
+    new_passphrase
+  fi
   case $? in
   1)
     log_error "Passphrase is empty" > /dev/stderr
@@ -70,7 +74,7 @@ cmd_encrypt() {
   for file in $JOURNAL_DIR/**/!(*.gpg); do
     if [[ -f "$file" && ! -f "$file.gpg" ]]; then 
       log_info "Encrypting and shredding $file" 
-      encrypt_file "$file" "$PASSPHRASE" && shred_file $file
+      encrypt_file "$file" "$PASSPHRASE" && shred_unencrypted_file $file
     fi
   done
 }
@@ -93,4 +97,14 @@ cmd_config() {
       set_config_key "$config_key" "$config_value"
     fi
   esac
+}
+
+cmd_new_passphrase() {
+  if keyring_enabled; then
+    set_and_save_new_passphrase
+    log_info "Password successfully changed and saved to keyring"
+  else
+    log_error "Keyring usage has been disabled"
+    log_error "To enable, run 'journaller config use-keyring on'"
+  fi
 }

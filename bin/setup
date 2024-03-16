@@ -30,15 +30,8 @@ else
   config_new
 fi
 
-# JOURNAL_DIR
-
-current_dir=$(cmd_config dir)
-if [[ -n "${current_dir}"  ]]; then
-  log_warn 'JOURNAL_DIR already defined'
-else 
-  log_info 'Setting JOURNAL_DIR...'
-  cmd_config dir '$HOME/journal'
-fi
+log_info 'Adding any new or missing configuration keys...'
+restore_missing_keys
 
 # Setting up PATH
 

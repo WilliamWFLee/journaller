@@ -20,7 +20,7 @@ _journaller_config() {
 }
 
 _journaller() {
-  local commands=(help new read copy encrypt config)
+  local commands=(help new read copy encrypt config new-passphrase)
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)

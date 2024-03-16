@@ -2,6 +2,11 @@ config_file_exists() {
   [[ -f ~/.journallerrc ]];
 }
 
+restore_missing_keys() {
+  set_config_key_unless_exists dir '$HOME/journal'
+  set_config_key_unless_exists use_keyring 'on'
+}
+
 create_config_file() {
   if config_file_exists; then
     false
@@ -9,18 +14,29 @@ create_config_file() {
     touch ~/.journallerrc
     true
   fi
+  restore_missing_keys
+}
+
+convert_name_to_config_var() {
+  echo "JOURNAL_${1^^}" | tr '-' '_'
 }
 
 get_config_key() {
-  echo "$(cat ~/.journallerrc | sed -n "s/JOURNAL_${1^^}=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
+  echo "$(cat ~/.journallerrc | sed -n "s/$(convert_name_to_config_var $1)=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
 }
 
 set_config_key() {
-  local config_key="JOURNAL_${1^^}"
+  local config_key="$(convert_name_to_config_var $1)"
   local config_value="${2/#~/\$HOME}"
   if config_file_exists && [[ $(cat ~/.journallerrc) = *"$config_key="* ]]; then
     sed "s,$config_key=.*,$config_key=\"$config_value\"," -i ~/.journallerrc
   else
     echo "$config_key=\"$config_value\"" >> ~/.journallerrc
+  fi
+}
+
+set_config_key_unless_exists() {
+  if [[ -z "$(get_config_key $1)" ]]; then
+    set_config_key "$@"
   fi
 }

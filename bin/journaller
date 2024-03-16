@@ -8,7 +8,7 @@ done
 
 config_file_exists && . ~/.journallerrc
 
-command="cmd_$1"
+command="cmd_${1/-/_}"
 if commands_exist $command; then
   $command "${@:2}"
 else
