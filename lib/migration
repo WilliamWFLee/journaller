@@ -1,0 +1,10 @@
+check_and_migrate_format() {
+  [[ ! -f "$JOURNAL_DIR/.journal/migrated" ]] && migrate_journal_format
+}
+
+migrate_format() {
+  for file in $JOURNAL_DIR/*/*/*; do
+    true
+  done
+}
+

@@ -27,6 +27,7 @@ retrieve_passphrase_from_keyring() {
 }
 
 retrieve_or_read_passphrase() {
+  [[ ! -z "$PASSPHRASE" ]] && return
   retrieve_passphrase_from_keyring && return
   read_passphrase
 }

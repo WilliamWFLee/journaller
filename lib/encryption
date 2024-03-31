@@ -1,8 +1,8 @@
 encrypt_file() {
-  if [[ -z "$2" ]]; then 
+  if [[ -z "$PASSPHRASE" ]]; then 
     gpg -c $1
   else
-    gpg -c --batch --passphrase "$2" $1
+    gpg -c --batch --passphrase "$PASSPHRASE" $1
   fi
 }
 
@@ -19,9 +19,24 @@ decrypt_file() {
   fi
 }
 
-decrypt_current_dir() {
+encrypt_dir() {
   local file
-  for file in $CURRENT_ENTRY_DIR/*.gpg; do
+  for file in $1/**/!(*.gpg); do
+    if [[ -f "$file" ]]; then 
+      if [[ ! -f "$file.gpg" && "$file" != *".html" ]]; then
+        log_info "Encrypting and shredding $file"
+        encrypt_file "$file" && shred_unencrypted_file $file
+      else
+        log_info "Shredding $file"
+        shred_unencrypted_file $file
+      fi
+    fi
+  done
+}
+
+decrypt_dir() {
+  local file
+  for file in $1/*.gpg; do
     decrypt_file $file
     case $? in
     0)
@@ -36,4 +51,8 @@ decrypt_current_dir() {
       ;;
     esac
   done
+}
+
+decrypt_current_dir() {
+  decrypt_dir $CURRENT_ENTRY_DIR
 }

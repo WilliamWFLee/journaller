@@ -53,7 +53,7 @@ cmd_copy() {
 }
 
 cmd_encrypt() {
-  log_info "Encrypting journal..."
+  log_info "Encrypting journal and shredding unencrypted files..."
 
   if keyring_enabled; then
     retrieve_or_read_passphrase
@@ -71,12 +71,8 @@ cmd_encrypt() {
     ;;
   esac
 
-  local file
-  for file in $JOURNAL_DIR/**/!(*.gpg); do
-    if [[ -f "$file" && ! -f "$file.gpg" ]]; then 
-      log_info "Encrypting and shredding $file" 
-      encrypt_file "$file" "$PASSPHRASE" && shred_unencrypted_file $file
-    fi
+  for entry in $JOURNAL_DIR/*/*/*; do
+    encrypt_dir "$entry"
   done
 }
 
