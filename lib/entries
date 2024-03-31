@@ -1,7 +1,8 @@
 get_all_entry_dates() {
-  ls -d $JOURNAL_DIR/*/*/* \
-  | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' \
-  | path_to_date
+  path_to_date "$(\
+    ls -d $JOURNAL_DIR/*/*/* \
+    | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' \
+  )"
 }
 
 get_latest_entry_date() {
@@ -24,7 +25,7 @@ interpret_date_text() {
 }
 
 set_current_entry_from_date_text() {
-  local date="$(interpret_date_text $1 | date_to_path)"
+  local date="$(date_to_path $(interpret_date_text $1))"
   set_current_entry $date
 }
 

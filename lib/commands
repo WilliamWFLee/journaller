@@ -25,10 +25,10 @@ cmd_new() {
 cmd_read() {
   set_current_entry_from_date_text $1
   if [[ $? -eq 1 ]]; then
-    log_error "Journal entry directory does not exist for $(echo $1 | path_to_date)"
+    log_error "Journal entry directory does not exist for $(path_to_date $1)"
     return 1
   elif [[ $? -eq 2 ]]; then
-    log_error "Root document not found in journal entry $(echo $1 | path_to_date)"
+    log_error "Root document not found in journal entry $(path_to_date $1)"
     return 1
   fi
 

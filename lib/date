@@ -7,9 +7,9 @@ current_time() {
 }
 
 path_to_date() {
-  sed 's,/,-,g'
+  echo -n "$1" | sed 's,/,-,g'
 }
 
 date_to_path() {
-  sed 's,-,/,g'
+  echo -n "$1" | sed 's,-,/,g'
 }
