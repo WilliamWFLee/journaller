@@ -20,12 +20,13 @@ deactivate_dev() {
 
 export PS1="(journaller dev) $PS1"
 export JOURNALLER_DEV=1
+export JOURNALLER_CONFIG_PATH=".journallerrc_dev"
 
 complete -r journaller
 unset -f journaller
 
 . $(dirname $BASH_SOURCE)/../lib/_autocomplete
 journaller() {
-  JOURNALLER_COMMAND="journaller" JOURNALLER_CONFIG_PATH=".journallerrc_dev" "$(dirname $BASH_SOURCE)/journaller" "$@"
+  JOURNALLER_COMMAND="journaller" "$(dirname $BASH_SOURCE)/journaller" "$@"
 }
 

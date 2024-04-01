@@ -80,9 +80,9 @@ cmd_config() {
   case $1 in
   new)
     if create_config_file; then
-      log_info "~/.journallerrc created"
+      log_info "Config file created"
     else
-      log_info "~/.journallerrc already exists"
+      log_info "Config file already exists"
     fi
     ;;
   *)

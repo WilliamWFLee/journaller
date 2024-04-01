@@ -7,7 +7,6 @@ for file in $(dirname $0)/../lib/**/!(_*); do
 done
 
 load_config
-echo $JOURNAL_DIR
 
 command="cmd_${1/-/_}"
 if commands_exist $command; then

@@ -21,11 +21,11 @@ else
   fi
 fi
 
-# ~/.journallerrc
+# Config file
 
-if [[ -f ~/.journallerrc ]]; then
-  log_info '~/.journallerrc already exists'
-  . ~/.journallerrc
+if [[ -f "$(config_path)" ]]; then
+  log_info 'Configuration file already exists'
+  load_config
 else
   config_new
 fi

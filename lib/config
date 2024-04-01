@@ -1,5 +1,5 @@
 config_path() {
-  echo "${JOURNALLER_CONFIG_PATH:-~/.journallerrc}"
+  echo "${JOURNALLER_CONFIG_PATH:-$HOME/.journallerrc}"
 }
 
 config_file_exists() {
@@ -17,12 +17,13 @@ restore_missing_keys() {
 
 create_config_file() {
   if config_file_exists; then
+    restore_missing_keys
     false
   else
-    touch ~/.journallerrc
+    touch "$(config_path)"
+    restore_missing_keys
     true
   fi
-  restore_missing_keys
 }
 
 convert_name_to_config_var() {

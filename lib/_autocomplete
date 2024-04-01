@@ -1,3 +1,4 @@
+. "$(dirname $BASH_SOURCE)/config"
 . "$(dirname $BASH_SOURCE)/entries"
 . "$(dirname $BASH_SOURCE)/date"
 . "$(dirname $BASH_SOURCE)/command_test"
@@ -5,7 +6,7 @@
 _journaller_read() {
   [[ $num_tokens -gt 3 ]] && return
 
-  . ~/.journallerrc
+  load_config
   local suggestions=('today' 'latest')
   IFS=$'\n' suggestions+=($(get_all_entry_dates))
   COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
