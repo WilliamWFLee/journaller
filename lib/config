@@ -1,5 +1,13 @@
+config_path() {
+  echo "${JOURNALLER_CONFIG_PATH:-~/.journallerrc}"
+}
+
 config_file_exists() {
-  [[ -f ~/.journallerrc ]];
+  [[ -f "$(config_path)" ]]
+}
+
+load_config() {
+  config_file_exists && . "$(config_path)"
 }
 
 restore_missing_keys() {
@@ -22,16 +30,16 @@ convert_name_to_config_var() {
 }
 
 get_config_key() {
-  echo "$(cat ~/.journallerrc | sed -n "s/$(convert_name_to_config_var $1)=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
+  echo "$(cat "$(config_path)" | sed -n "s/$(convert_name_to_config_var $1)=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
 }
 
 set_config_key() {
   local config_key="$(convert_name_to_config_var $1)"
   local config_value="${2/#~/\$HOME}"
-  if config_file_exists && [[ $(cat ~/.journallerrc) = *"$config_key="* ]]; then
-    sed "s,$config_key=.*,$config_key=\"$config_value\"," -i ~/.journallerrc
+  if config_file_exists && [[ $(cat "$(config_path)") = *"$config_key="* ]]; then
+    sed "s,$config_key=.*,$config_key=\"$config_value\"," -i "$(config_path)"
   else
-    echo "$config_key=\"$config_value\"" >> ~/.journallerrc
+    echo "$config_key=\"$config_value\"" >> "$(config_path)"
   fi
 }
 

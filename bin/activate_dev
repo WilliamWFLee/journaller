@@ -1,0 +1,31 @@
+# Check if this file is being sourced
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  echo 'Error: this script must be sourced' > /dev/stderr
+  exit 1
+fi
+
+if [[ -n "${JOURNALLER_DEV+x}" ]]; then
+  deactivate_dev
+fi
+
+deactivate_dev() {
+  export PS1="$(echo $PS1 | sed -s 's/(journaller dev) //')"
+  unset JOURNALLER_DEV
+
+  complete -r journaller
+  unset -f journaller
+
+  [[ -f ~/.journaller/bin/include ]] && . ~/.journaller/bin/include
+}
+
+export PS1="(journaller dev) $PS1"
+export JOURNALLER_DEV=1
+
+complete -r journaller
+unset -f journaller
+
+. $(dirname $BASH_SOURCE)/../lib/_autocomplete
+journaller() {
+  JOURNALLER_COMMAND="journaller" JOURNALLER_CONFIG_PATH=".journallerrc_dev" "$(dirname $BASH_SOURCE)/journaller" "$@"
+}
+

@@ -1,12 +1,10 @@
 # Check if this file is being sourced
-(return > /dev/null 2>&1)
-if [[ $? -ne 0 ]]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
   echo 'Error: this script must be sourced' > /dev/stderr
   exit 1
 fi
 
 . $(dirname $BASH_SOURCE)/../lib/_autocomplete
-
 journaller() {
   JOURNALLER_COMMAND="journaller" "$(dirname $BASH_SOURCE)/journaller" "$@"
 }

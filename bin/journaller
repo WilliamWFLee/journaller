@@ -6,7 +6,8 @@ for file in $(dirname $0)/../lib/**/!(_*); do
   [[ -f $file ]] && . $file
 done
 
-config_file_exists && . ~/.journallerrc
+load_config
+echo $JOURNAL_DIR
 
 command="cmd_${1/-/_}"
 if commands_exist $command; then
