@@ -13,8 +13,10 @@ decrypt_file() {
     return 1
   fi
 
-  gpg -d -o "$decrypted_file" --batch --passphrase "$PASSPHRASE" "$file" > /dev/null 2>&1
-  if [[ $? -ne 0 ]]; then
+  if ! ( \
+    gpg -d -o "$decrypted_file" --batch 
+    --passphrase "$PASSPHRASE" "$file" > /dev/null 2>&1 \
+  ); then
     return 2
   fi
 }
@@ -39,16 +41,16 @@ decrypt_dir() {
   for file in $1/*.gpg; do
     decrypt_file $file
     case $? in
-    0)
-      log_info "Decrypted $file"
-      ;;
-    1)
-      log_warn "$file already decrypted, skipping..."
-      ;;
-    2)
-      log_error "Failed to decrypt $file, check key"
-      return 1
-      ;;
+      0)
+        log_info "Decrypted $file"
+        ;;
+      1)
+        log_warn "$file already decrypted, skipping..."
+        ;;
+      2)
+        log_error "Failed to decrypt $file, check key"
+        return 1
+        ;;
     esac
   done
 }

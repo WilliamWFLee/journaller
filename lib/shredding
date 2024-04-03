@@ -12,12 +12,12 @@ shred_unencrypted_files_current_dir() {
   for file in $CURRENT_ENTRY_DIR/!(*.gpg); do
     shred_unencrypted_file $file
     case $? in
-    0)
-      log_info "Shredded $file"
-      ;;
-    1)
-      log_warn "$file was skipped as it was not encrypted"
-      ;;
+      0)
+        log_info "Shredded $file"
+        ;;
+      1)
+        log_warn "$file was skipped as it was not encrypted"
+        ;;
     esac
   done
 }

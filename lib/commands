@@ -24,20 +24,22 @@ cmd_new() {
 
 cmd_read() {
   set_current_entry_from_date_text $1
-  if [[ $? -eq 1 ]]; then
-    log_error "Journal entry directory does not exist for $(path_to_date $1)"
-    return 1
-  elif [[ $? -eq 2 ]]; then
-    log_error "Root document not found in journal entry $(path_to_date $1)"
-    return 1
-  fi
+  case $? in
+    1)
+      log_error "Journal entry directory does not exist for $(path_to_date $1)"
+      return 1
+      ;;
+    2)
+      log_error "Root document not found in journal entry $(path_to_date $1)"
+      return 1
+      ;;
+  esac
 
   log_info "Opening journal entry"
   log_info "Retrieving passphrase to decrypt journal entry"
   retrieve_or_read_passphrase
 
-  decrypt_current_dir
-  [[ $? -ne 0 ]] && return 1
+  decrypt_current_dir || return 1
 
   pandoc -f markdown -t html $CURRENT_ENTRY_DIR/text.md > $CURRENT_ENTRY_DIR/text.html
   open $CURRENT_ENTRY_DIR/text.html 2> /dev/null
@@ -61,14 +63,14 @@ cmd_encrypt() {
     new_passphrase
   fi
   case $? in
-  1)
-    log_error "Passphrase is empty"
-    return 1
-    ;;
-  2)
-    log_error "Passphrases do not match"
-    return 1
-    ;;
+    1)
+      log_error "Passphrase is empty"
+      return 1
+      ;;
+    2)
+      log_error "Passphrases do not match"
+      return 1
+      ;;
   esac
 
   for entry in $JOURNAL_DIR/*/*/*; do
