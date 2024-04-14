@@ -1,7 +1,8 @@
 #!/bin/bash
 
-mkdir -p ~/.journaller
-cd ~/.journaller
+install_path="${JOURNALLER_INSTALL_LOCATION:-~/.journaller}"
+mkdir -p $install_path
+cd $install_path
 
 echo 'Downloading files from Git repository...'
 git init -q

@@ -1,8 +1,18 @@
 # Check if this file is being sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ "$BASH_SOURCE" == "$0" ]]; then
   echo 'Error: this script must be sourced' > /dev/stderr
   exit 1
 fi
+
+deactivate_dev() {
+  export PS1="$(echo $PS1 | sed -s 's/(journaller dev) //')"
+  unset JOURNALLER_DEV JOURNALLER_CONFIG_PATH JOURNALLER_INSTALL_LOCATION
+
+  complete -r journaller
+  unset -f journaller
+
+  [[ -f ~/.journaller/bin/include ]] && . ~/.journaller/bin/include
+}
 
 if [[ -n "${JOURNALLER_DEV+x}" ]]; then
   echo 'Reloading development environment...'
@@ -11,25 +21,20 @@ else
   echo 'Activating development environment...'
 fi
 
-deactivate_dev() {
-  export PS1="$(echo $PS1 | sed -s 's/(journaller dev) //')"
-  unset JOURNALLER_DEV JOURNALLER_CONFIG_PATH
-
-  complete -r journaller
-  unset -f journaller
-
-  [[ -f ~/.journaller/bin/include ]] && . ~/.journaller/bin/include
-}
+source_dir="$(dirname $BASH_SOURCE)"
 
 export PS1="(journaller dev) $PS1"
 export JOURNALLER_DEV=1
-export JOURNALLER_CONFIG_PATH=".journallerrc_dev"
+export JOURNALLER_CONFIG_PATH="$(realpath -m $source_dir/../.journallerrc_dev)"
+export JOURNALLER_INSTALL_LOCATION="$(realpath -m source_dir/../dev_installation)"
+
+echo -e "JOURNAL_DIR='$(realpath -m $source_dir/../dev_journal)'\nJOURNAL_USE_KEYRING='on'" > $JOURNALLER_CONFIG_PATH
 
 complete -r journaller
 unset -f journaller
 
-. $(dirname $BASH_SOURCE)/../lib/_autocomplete
+. $source_dir/../lib/_autocomplete
 journaller() {
-  JOURNALLER_COMMAND="journaller" "$(dirname $BASH_SOURCE)/journaller" "$@"
+  JOURNALLER_COMMAND="journaller" "$source_dir/journaller" "$@"
 }
 

@@ -1,3 +1,5 @@
 /dev_journal/
+/dev_installation/
+.journallerrc_dev
 
 .vscode/

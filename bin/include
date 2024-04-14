@@ -1,5 +1,5 @@
 # Check if this file is being sourced
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+if [[ "$BASH_SOURCE" == "$0" ]]; then
   echo 'Error: this script must be sourced' > /dev/stderr
   exit 1
 fi
