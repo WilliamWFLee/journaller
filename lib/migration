@@ -5,13 +5,16 @@ requires_migration() {
 migrate_journal_format() {
   retrieve_or_read_passphrase
   for entry_dir in $JOURNAL_DIR/*/*/*; do
-    log_info "Migrating entry for $(echo $entry_dir | extract_date_from_path)"
-
-    old_decrypt_dir $entry_dir || return 1
-    for file in $entry_dir/**/*.gpg; do
-      shred_file $file
-    done
-    encrypt_dir $entry_dir
+    if [[ -f "$entry_dir/entry.tar.gz.gpg" ]]; then
+      log_info "Already migrated entry for $(echo $entry_dir | extract_date_from_path)"
+    else
+      log_info "Migrating entry for $(echo $entry_dir | extract_date_from_path)"
+      old_decrypt_dir $entry_dir || return 1
+      for file in $entry_dir/**/*.gpg; do
+        shred_file $file
+      done
+      encrypt_dir $entry_dir
+    fi
   done
 
   mkdir -p "$(dirname $(version_file_path))"

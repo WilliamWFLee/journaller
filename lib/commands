@@ -113,7 +113,6 @@ cmd_new_passphrase() {
 }
 
 cmd_migrate() {
-  log_info 'Checking if journal has been migrated'
   if requires_migration; then
     log_info 'Journal migration needed'
     migrate_journal_format
