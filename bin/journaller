@@ -13,6 +13,7 @@ command="cmd_${1/-/_}"
 if requires_migration && [[ "$command" != "cmd_migrate" ]]; then
   log_error 'Journal format is outdated'
   log_error "Migrate using '$0 migrate'"
+  exit 2
 fi
 
 if commands_exist $command; then
@@ -22,4 +23,5 @@ else
     echo "'$1' is not a journaller command."
   fi
   cmd_help
+  exit 1
 fi
