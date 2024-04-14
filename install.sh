@@ -1,6 +1,6 @@
 #!/bin/bash
 
-install_path="${JOURNALLER_INSTALL_LOCATION:-~/.journaller}"
+install_path="${JOURNALLER_INSTALL_LOCATION:-$HOME/.journaller}"
 mkdir -p $install_path
 cd $install_path
 
