@@ -6,6 +6,8 @@ shopt -s extglob globstar nullglob
 . "$(dirname $0)/../lib/config"
 . "$(dirname $0)/../lib/commands"
 . "$(dirname $0)/../lib/command_test"
+. "$(dirname $0)/../lib/migration"
+. "$(dirname $0)/../lib/version"
 
 # Dependencies
 
@@ -41,6 +43,12 @@ if [[ "$(cat ~/.bashrc)" == *"${SOURCE_COMMAND}"* ]]; then
 else
   log_info "Adding journaller function to ~/.bashrc"
   echo $SOURCE_COMMAND >> ~/.bashrc
+fi
+
+# Migration check
+
+if requires_migration; then
+  log_warn "Journal format has been updated. Please migrate using 'journaller migrate'"
 fi
 
 log_info 'Installation done.'

@@ -1,60 +1,29 @@
-encrypt_file() {
-  if [[ -z "$PASSPHRASE" ]]; then 
-    gpg -c $1
-  else
-    gpg -c --batch --passphrase "$PASSPHRASE" $1
-  fi
-}
-
-decrypt_file() {
-  local file="$1"
-  local decrypted_file="${file/.gpg/}"
-  if [[ -f "$decrypted_file" ]]; then
-    return 1
-  fi
-
-  if ! ( \
-    gpg -d -o "$decrypted_file" --batch \
-    --passphrase "$PASSPHRASE" "$file" > /dev/null 2>&1 \
-  ); then
-    return 2
-  fi
+decrypt_entry_file() {
+  local decrypted_file="${1/.gpg/}"
+  gpg -d -o "$decrypted_file" --batch --passphrase "$PASSPHRASE" "$1" > /dev/null 2>&1
 }
 
 encrypt_dir() {
-  local file
-  for file in $1/**/!(*.gpg); do
-    if [[ -f "$file" ]]; then 
-      if [[ ! -f "$file.gpg" && "$file" != *".html" ]]; then
-        log_info "Encrypting and shredding $file"
-        encrypt_file "$file" && shred_unencrypted_file $file
-      else
-        log_info "Shredding $file"
-        shred_unencrypted_file $file
-      fi
-    fi
-  done
+  local encrypted_entry_filename="$1/entry.tar.gz.gpg"
+  local temporary_tar_filename="$(mktemp -d)/entry.tar.gz"
+  [[ -f "${encrypted_entry_filename}" ]] && return 1
+
+  tar -C "$1" -c . | gzip -9 -cq > "$temporary_tar_filename"
+  gpg -c --batch --passphrase "$PASSPHRASE" "$temporary_tar_filename"
+  mv "${temporary_tar_filename}.gpg" "${encrypted_entry_filename}" 
+  shred_file "${temporary_tar_filename}"
+  shred_unencrypted_entry_files "$1"
 }
 
 decrypt_dir() {
-  local file
-  for file in $1/*.gpg; do
-    decrypt_file $file
-    case $? in
-      0)
-        log_info "Decrypted $file"
-        ;;
-      1)
-        log_warn "$file already decrypted, skipping..."
-        ;;
-      2)
-        log_error "Failed to decrypt $file, check key"
-        return 1
-        ;;
-    esac
-  done
-}
-
-decrypt_current_dir() {
-  decrypt_dir $CURRENT_ENTRY_DIR
+  local entry_tar_filename="$1/entry.tar.gz"
+  local encrypted_entry_file="$1/entry.tar.gz.gpg"
+  if decrypt_entry_file $encrypted_entry_file; then
+    log_info "Decrypting entry"
+    tar -C $1 -xf $entry_tar_filename
+    rm $encrypted_entry_file
+    shred_file $entry_tar_filename
+  else
+    log_error "Failed to decrypt entry, check key"
+  fi
 }

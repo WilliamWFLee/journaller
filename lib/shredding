@@ -1,23 +1,11 @@
-shred_unencrypted_file() {
-  local file="$1"
-  local encrypted_file="$file.gpg"
-  if [[ ! -f "$encrypted_file" && "$file" != *".html" ]]; then
-    return 1
-  fi
-  shred -xun 3 $file
+shred_file() {
+  shred -xun 3 $1
 }
 
-shred_unencrypted_files_current_dir() {
-  local file
-  for file in $CURRENT_ENTRY_DIR/!(*.gpg); do
-    shred_unencrypted_file $file
-    case $? in
-      0)
-        log_info "Shredded $file"
-        ;;
-      1)
-        log_warn "$file was skipped as it was not encrypted"
-        ;;
-    esac
+shred_unencrypted_entry_files() {
+  [[ ! -f "$1/entry.tar.gz.gpg" ]] && return 1
+
+  for file in $1/**/!(*.gpg); do
+    shred_file $file
   done
 }

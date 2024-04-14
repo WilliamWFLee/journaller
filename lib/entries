@@ -1,7 +1,7 @@
 get_all_entry_dates() {
   path_to_date "$(\
     ls -d $JOURNAL_DIR/*/*/* \
-    | sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p' \
+    | extract_date_from_path \
   )"
 }
 
@@ -33,7 +33,7 @@ set_current_entry() {
   local dir="$JOURNAL_DIR/${1}"
   if [[ ! -d "$dir" ]]; then
     return 1
-  elif [[ ! ( -f "$dir/text.md" || -f "$dir/text.md.gpg") ]]; then
+  elif [[ ! -f "$dir/entry.tar.gz.gpg" ]]; then
     return 2
   fi
   CURRENT_ENTRY_DIR="$dir"
@@ -41,5 +41,6 @@ set_current_entry() {
 
 set_new_entry() {
   local dir="$JOURNAL_DIR/${1}"
+  mkdir -p $dir
   CURRENT_ENTRY_DIR="$dir"
 }

@@ -9,6 +9,12 @@ done
 load_config
 
 command="cmd_${1/-/_}"
+
+if requires_migration && [[ "$command" != "cmd_migrate" ]]; then
+  log_error 'Journal format is outdated'
+  log_error "Migrate using '$0 migrate'"
+fi
+
 if commands_exist $command; then
   $command "${@:2}"
 else

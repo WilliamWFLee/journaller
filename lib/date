@@ -13,3 +13,7 @@ path_to_date() {
 date_to_path() {
   echo -n "$1" | sed 's,-,/,g'
 }
+
+extract_date_from_path() {
+  sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p'
+}

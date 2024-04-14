@@ -10,12 +10,12 @@ Possible subcommands:
   config          configure journaller
   help            display this help
   new-passphrase  add/update the journal password in the keyring
+  migrate         migrate the journal to a new format if required
 EOF
 }
 
 cmd_new() {
   set_new_entry "$(current_date)"
-  mkdir -p "$CURRENT_ENTRY_DIR"
 
   local file="$CURRENT_ENTRY_DIR/text.md"
   echo -ne "**$(current_time)**\n\n" >> "$file"
@@ -39,15 +39,16 @@ cmd_read() {
   log_info "Retrieving passphrase to decrypt journal entry"
   retrieve_or_read_passphrase
 
-  decrypt_current_dir || return 1
+  decrypt_dir $CURRENT_ENTRY_DIR || return 1
 
   pandoc -f markdown -t html $CURRENT_ENTRY_DIR/text.md > $CURRENT_ENTRY_DIR/text.html
   open $CURRENT_ENTRY_DIR/text.html 2> /dev/null
 
   log_info "Opening in browser, press <Return> to continue" && read
-  log_info "Shredding decrypted files"
+  log_info "Shredding rendered journal entry and re-encrypting files"
 
-  shred_unencrypted_files_current_dir
+  shred_file $CURRENT_ENTRY_DIR/text.html
+  encrypt_dir $CURRENT_ENTRY_DIR
 }
 
 cmd_copy() {
@@ -55,7 +56,7 @@ cmd_copy() {
 }
 
 cmd_encrypt() {
-  log_info "Encrypting journal and shredding unencrypted files..."
+  log_info "Encrypting any unencrypted entries..."
 
   if keyring_enabled; then
     retrieve_or_read_passphrase
@@ -74,7 +75,7 @@ cmd_encrypt() {
   esac
 
   for entry in $JOURNAL_DIR/*/*/*; do
-    encrypt_dir "$entry"
+    encrypt_dir "$entry" && log_info "Encrypted entry for $(echo $entry | extract_date_from_path)"
   done
 }
 
@@ -108,5 +109,15 @@ cmd_new_passphrase() {
   else
     log_error "Keyring usage has been disabled"
     log_error "To enable, run 'journaller config use-keyring on'"
+  fi
+}
+
+cmd_migrate() {
+  log_info 'Checking if journal has been migrated'
+  if requires_migration; then
+    log_info 'Journal migration needed'
+    migrate_journal_format
+  else
+    log_info 'Journal already migrated, no action needed'
   fi
 }
