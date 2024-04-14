@@ -26,10 +26,9 @@ retrieve_passphrase_from_keyring() {
   [[ ! -z "$PASSPHRASE" ]]
 }
 
-retrieve_or_read_passphrase() {
+retrieve_passphrase() {
   [[ ! -z "$PASSPHRASE" ]] && return
   retrieve_passphrase_from_keyring && return
-  read_passphrase
 }
 
 set_and_save_new_passphrase() {
@@ -37,11 +36,7 @@ set_and_save_new_passphrase() {
     save_passphrase_to_keyring
     return 0
   else
-    log_error 'Password not entered, or do not match'
+    log_error 'Password not entered, or password confirmation does not match'
     return 1
   fi
-}
-
-keyring_enabled() {
-  [[ "$JOURNAL_USE_KEYRING" == 'on' ]]
 }

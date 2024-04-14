@@ -12,7 +12,6 @@ load_config() {
 
 restore_missing_keys() {
   set_config_key_unless_exists dir '$HOME/journal'
-  set_config_key_unless_exists use_keyring 'on'
 }
 
 create_config_file() {

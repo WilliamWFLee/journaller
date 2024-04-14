@@ -28,7 +28,7 @@ export JOURNALLER_DEV=1
 export JOURNALLER_CONFIG_PATH="$(realpath -m $source_dir/../.journallerrc_dev)"
 export JOURNALLER_INSTALL_LOCATION="$(realpath -m source_dir/../dev_installation)"
 
-echo -e "JOURNAL_DIR='$(realpath -m $source_dir/../dev_journal)'\nJOURNAL_USE_KEYRING='on'" > $JOURNALLER_CONFIG_PATH
+echo -e "JOURNAL_DIR='$(realpath -m $source_dir/../dev_journal)'" > $JOURNALLER_CONFIG_PATH
 
 complete -r journaller
 unset -f journaller

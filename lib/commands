@@ -3,10 +3,9 @@ cmd_help() {
 Syntax: ${JOURNALLER_COMMAND:-$0} <subcommand> <args>
 
 Possible subcommands:
-  new             write a new entry
+  write           write a new entry or update an existing entry
   read            read journal entries
   copy            copy the entire journal to another directory
-  encrypt         encrypt any unencrypted entries
   config          configure journaller
   help            display this help
   new-passphrase  add/update the journal password in the keyring
@@ -14,12 +13,15 @@ Possible subcommands:
 EOF
 }
 
-cmd_new() {
+cmd_write() {
+  retrieve_passphrase
   set_new_entry "$(current_date)"
 
   local file="$CURRENT_ENTRY_DIR/text.md"
   echo -ne "**$(current_time)**\n\n" >> "$file"
   vim "$file"
+
+  encrypt_dir $CURRENT_ENTRY_DIR
 }
 
 cmd_read() {
@@ -37,7 +39,7 @@ cmd_read() {
 
   log_info "Opening journal entry"
   log_info "Retrieving passphrase to decrypt journal entry"
-  retrieve_or_read_passphrase
+  retrieve_passphrase
 
   decrypt_dir $CURRENT_ENTRY_DIR || return 1
 
@@ -53,30 +55,6 @@ cmd_read() {
 
 cmd_copy() {
   rsync -av --modify-window=1 --times --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
-}
-
-cmd_encrypt() {
-  log_info "Encrypting any unencrypted entries..."
-
-  if keyring_enabled; then
-    retrieve_or_read_passphrase
-  else
-    new_passphrase
-  fi
-  case $? in
-    1)
-      log_error "Passphrase is empty"
-      return 1
-      ;;
-    2)
-      log_error "Passphrases do not match"
-      return 1
-      ;;
-  esac
-
-  for entry in $JOURNAL_DIR/*/*/*; do
-    encrypt_dir "$entry" && log_info "Encrypted entry for $(echo $entry | extract_date_from_path)"
-  done
 }
 
 cmd_config() {
@@ -100,15 +78,10 @@ cmd_config() {
 }
 
 cmd_new_passphrase() {
-  if keyring_enabled; then
-    if set_and_save_new_passphrase; then
-      log_info "Password successfully changed and saved to keyring"
-    else
-      log_error "Password was not updated"
-    fi
+  if set_and_save_new_passphrase; then
+    log_info "Password successfully changed and saved to keyring"
   else
-    log_error "Keyring usage has been disabled"
-    log_error "To enable, run 'journaller config use-keyring on'"
+    log_error "Password was not updated"
   fi
 }
 

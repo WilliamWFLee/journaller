@@ -3,7 +3,7 @@ requires_migration() {
 }
 
 migrate_journal_format() {
-  retrieve_or_read_passphrase
+  retrieve_passphrase
   for entry_dir in $JOURNAL_DIR/*/*/*; do
     if [[ -f "$entry_dir/entry.tar.gz.gpg" ]]; then
       log_info "Already migrated entry for $(echo $entry_dir | extract_date_from_path)"
