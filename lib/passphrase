@@ -21,14 +21,10 @@ save_passphrase_to_keyring() {
   echo $PASSPHRASE | keyring set journaller default
 }
 
-retrieve_passphrase_from_keyring() {
-  PASSPHRASE="$(keyring get journaller default)"
-  [[ ! -z "$PASSPHRASE" ]]
-}
-
 retrieve_passphrase() {
   [[ ! -z "$PASSPHRASE" ]] && return
-  retrieve_passphrase_from_keyring && return
+  PASSPHRASE="$(keyring get journaller default)"
+  [[ ! -z "$PASSPHRASE" ]]
 }
 
 set_and_save_new_passphrase() {

@@ -1,46 +1,23 @@
 get_all_entry_dates() {
   path_to_date "$(\
     ls -d $JOURNAL_DIR/*/*/* \
-    | extract_date_from_path \
+    | extract_date \
   )"
 }
 
 get_latest_entry_date() {
-  get_all_entry_dates | sort | tail -n1
+  date_to_path "$(get_all_entry_dates | sort | tail -n1)"
 }
 
-interpret_date_text() {
-  case "$1" in
-  today)
-    current_date
-    ;;
-  latest)
-    ;&
-  '')
-    get_latest_entry_date
-    ;;
-  *)
-    echo $1
-  esac
+set_current_entry_dir() {
+  CURRENT_ENTRY_DIR="$JOURNAL_DIR/$1"
 }
 
-set_current_entry_from_date_text() {
-  local date="$(date_to_path $(interpret_date_text $1))"
-  set_current_entry $date
-}
-
-set_current_entry() {
-  local dir="$JOURNAL_DIR/${1}"
-  if [[ ! -d "$dir" ]]; then
-    return 1
-  elif [[ ! -f "$dir/entry.tar.gz.gpg" ]]; then
-    return 2
-  fi
-  CURRENT_ENTRY_DIR="$dir"
-}
-
-set_new_entry() {
+make_entry_dir() {
   local dir="$JOURNAL_DIR/${1}"
   mkdir -p $dir
-  CURRENT_ENTRY_DIR="$dir"
+}
+
+entry_dir_has_encrypted_entry() {
+  [[ -f "$1/entry.tar.gz.gpg" ]]
 }

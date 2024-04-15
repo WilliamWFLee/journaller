@@ -1,3 +1,7 @@
+date_regex() {
+  echo "[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}"
+}
+
 current_date() {
   date +'%Y/%m/%d'
 }
@@ -14,6 +18,21 @@ date_to_path() {
   echo -n "$1" | sed 's,-,/,g'
 }
 
-extract_date_from_path() {
-  sed -nE 's,.*([[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}),\1,p'
+extract_date() {
+  sed -nE "s,.*($(date_regex)),\1,p"
+}
+
+interpret_date_text() {
+  case "$1" in
+  today)
+    current_date
+    ;;
+  latest)
+    ;&
+  '')
+    get_latest_entry_date
+    ;;
+  *)
+    echo "$1" | sed 's,-,/,g'
+  esac
 }

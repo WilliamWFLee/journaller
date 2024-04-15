@@ -15,33 +15,46 @@ EOF
 
 cmd_write() {
   retrieve_passphrase
-  set_new_entry "$(current_date)"
+
+  path="$(interpret_date_text $1)"
+  if [[ -z "$(echo $path | extract_date)" ]]; then
+    log_error 'Date is not valid'
+    log_error "Valid formats are: YYYY-MM-DD, YYYY/MM/DD, 'latest' or 'today' (default)"
+    return 1
+  fi
+  make_entry_dir "$path"
+  set_current_entry_dir "$path"
+  decrypt_dir $CURRENT_ENTRY_DIR
 
   local file="$CURRENT_ENTRY_DIR/text.md"
-  echo -ne "**$(current_time)**\n\n" >> "$file"
   vim "$file"
 
   encrypt_dir $CURRENT_ENTRY_DIR
 }
 
 cmd_read() {
-  set_current_entry_from_date_text $1
-  case $? in
-    1)
-      log_error "Journal entry directory does not exist for $(path_to_date $1)"
-      return 1
-      ;;
-    2)
-      log_error "Root document not found in journal entry $(path_to_date $1)"
-      return 1
-      ;;
-  esac
+  path="$(interpret_date_text $1)"
+  set_current_entry_dir $path
+  if [[ ! -d "$CURRENT_ENTRY_DIR" ]]; then
+    log_error "Journal entry directory does not exist for '$(path_to_date $path)'"
+    return 1
+  fi
+  if ! entry_dir_has_encrypted_entry $CURRENT_ENTRY_DIR; then
+    log_error "Root document not found in journal entry '$(path_to_date $path)'"
+    return 1
+  fi
 
   log_info "Opening journal entry"
   log_info "Retrieving passphrase to decrypt journal entry"
   retrieve_passphrase
 
-  decrypt_dir $CURRENT_ENTRY_DIR || return 1
+  if decrypt_dir $CURRENT_ENTRY_DIR; then
+    log_info 'Decrypted entry'
+  else
+    log_error 'Failed to decrypt entry'
+    log_error 'Make sure the passphrase in the keychain is correct'
+    return 1
+  fi
 
   pandoc -f markdown -t html $CURRENT_ENTRY_DIR/text.md > $CURRENT_ENTRY_DIR/text.html
   open $CURRENT_ENTRY_DIR/text.html 2> /dev/null

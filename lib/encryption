@@ -18,12 +18,15 @@ encrypt_dir() {
 decrypt_dir() {
   local entry_tar_filename="$1/entry.tar.gz"
   local encrypted_entry_file="$1/entry.tar.gz.gpg"
+  echo $encrypted_entry_file
+  [[ ! -f "${encrypted_entry_file}" ]] && return 1
+
   if decrypt_entry_file $encrypted_entry_file; then
-    log_info "Decrypting entry"
     tar -C $1 -xf $entry_tar_filename
     rm $encrypted_entry_file
     shred_file $entry_tar_filename
-  else
-    log_error "Failed to decrypt entry, check key"
+    return 0
   fi
+
+  return 2
 }

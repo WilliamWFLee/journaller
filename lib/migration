@@ -6,9 +6,9 @@ migrate_journal_format() {
   retrieve_passphrase
   for entry_dir in $JOURNAL_DIR/*/*/*; do
     if [[ -f "$entry_dir/entry.tar.gz.gpg" ]]; then
-      log_info "Already migrated entry for $(echo $entry_dir | extract_date_from_path)"
+      log_info "Already migrated entry for $(echo $entry_dir | extract_date)"
     else
-      log_info "Migrating entry for $(echo $entry_dir | extract_date_from_path)"
+      log_info "Migrating entry for $(echo $entry_dir | extract_date)"
       old_decrypt_dir $entry_dir || return 1
       for file in $entry_dir/**/*.gpg; do
         shred_file $file
