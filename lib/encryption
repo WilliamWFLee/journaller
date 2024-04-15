@@ -18,7 +18,6 @@ encrypt_dir() {
 decrypt_dir() {
   local entry_tar_filename="$1/entry.tar.gz"
   local encrypted_entry_file="$1/entry.tar.gz.gpg"
-  echo $encrypted_entry_file
   [[ ! -f "${encrypted_entry_file}" ]] && return 1
 
   if decrypt_entry_file $encrypted_entry_file; then
