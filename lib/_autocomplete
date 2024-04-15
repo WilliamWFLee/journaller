@@ -3,7 +3,7 @@
 . "$(dirname $BASH_SOURCE)/date"
 . "$(dirname $BASH_SOURCE)/command_test"
 
-_journaller_read() {
+_journaller_write() {
   [[ $num_tokens -gt 3 ]] && return
 
   load_config
