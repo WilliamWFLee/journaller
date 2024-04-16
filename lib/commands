@@ -16,7 +16,7 @@ EOF
 cmd_write() {
   retrieve_passphrase
 
-  path="$(interpret_date_text $1)"
+  path="$(interpret_date_text $1 today)"
   if [[ -z "$(echo $path | extract_date)" ]]; then
     log_error 'Date is not valid'
     log_error "Valid formats are: YYYY-MM-DD, YYYY/MM/DD, 'latest' or 'today' (default)"
@@ -33,7 +33,7 @@ cmd_write() {
 }
 
 cmd_read() {
-  path="$(interpret_date_text $1)"
+  path="$(interpret_date_text $1 latest)"
   set_current_entry_dir $path
   if [[ ! -d "$CURRENT_ENTRY_DIR" ]]; then
     log_error "Journal entry directory does not exist for '$(path_to_date $path)'"
