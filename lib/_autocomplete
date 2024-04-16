@@ -3,13 +3,21 @@
 . "$(dirname $BASH_SOURCE)/date"
 . "$(dirname $BASH_SOURCE)/command_test"
 
-_journaller_write() {
+_journaller_read_and_write() {
   [[ $num_tokens -gt 3 ]] && return
 
   load_config
   local suggestions=('today' 'latest')
   IFS=$'\n' suggestions+=($(get_all_entry_dates))
   COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
+}
+
+_journaller_read() {
+  _journaller_read_and_write
+}
+
+_journaller_write() {
+  _journaller_read_and_write
 }
 
 _journaller_config() {
