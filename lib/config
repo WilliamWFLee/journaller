@@ -29,6 +29,12 @@ convert_name_to_config_var() {
   echo "JOURNAL_${1^^}" | tr '-' '_'
 }
 
+VALID_CONFIG_KEYS=('dir')
+
+config_key_valid() {
+  [[ " ${VALID_CONFIG_KEYS[*]} " == *" $1 "* ]]
+}
+
 get_config_key() {
   echo "$(cat "$(config_path)" | sed -n "s/$(convert_name_to_config_var $1)=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
 }

@@ -82,6 +82,11 @@ cmd_config() {
   *)
     local config_key="$1"
     local config_value="$2"
+    if ! config_key_valid $config_key; then
+      log_error "Config key '$config_key' is not valid"
+      log_error "Possible keys are: ${VALID_CONFIG_KEYS[*]}" 
+      exit 1
+    fi
     if [[ -z "$config_value" ]]; then
       get_config_key "$config_key"
     else
