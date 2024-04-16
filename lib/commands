@@ -14,6 +14,16 @@ EOF
 }
 
 cmd_write() {
+  if [[ -z "$JOURNAL_EDITOR" ]]; then
+    log_error "You have not set your editor"
+    log_error "Set it using 'journaller set editor <editor_command>'"
+    exit 1
+  elif ! commands_exist "$JOURNAL_EDITOR"; then
+    log_error "Your configured editor '$JOURNAL_EDITOR' is not a valid command or path"
+    log_error "Please check you've configured your editor correctly"
+    exit 1
+  fi
+
   retrieve_passphrase
 
   path="$(interpret_date_text $1 today)"
@@ -27,7 +37,7 @@ cmd_write() {
   decrypt_dir $CURRENT_ENTRY_DIR
 
   local file="$CURRENT_ENTRY_DIR/text.md"
-  vim "$file"
+  $JOURNAL_EDITOR "$file"
 
   encrypt_dir $CURRENT_ENTRY_DIR
 }

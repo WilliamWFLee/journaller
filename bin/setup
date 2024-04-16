@@ -11,11 +11,11 @@ shopt -s extglob globstar nullglob
 
 # Dependencies
 
-if commands_exist gpg pandoc vim keyring; then
+if commands_exist gpg pandoc keyring; then
   log_info "Dependencies already satisfied"
 else
   log_info "Installing missing dependencies using apt..."
-  if ! sudo apt install gpg pandoc vim python3-keyring -y --no-install-recommends; then
+  if ! sudo apt install gpg pandoc python3-keyring -y --no-install-recommends; then
     log_error "Dependencies could not be installed; check output"
     exit 1
   fi
@@ -28,6 +28,7 @@ if [[ -f "$(config_path)" ]]; then
   load_config
 else
   config_new
+  load_config
 fi
 
 log_info 'Adding any new or missing configuration keys...'
@@ -49,6 +50,13 @@ fi
 
 if requires_migration; then
   log_warn "Journal format has been updated. Please migrate using 'journaller migrate'"
+fi
+
+if [[ -z "$JOURNAL_EDITOR" ]]; then
+  log_info "-------------------------------------------------"
+  log_info "!! Important: please set your text editor"
+  log_info "using 'journaller config editor <editor_command>'"
+  log_info "-------------------------------------------------"
 fi
 
 log_info 'Installation done.'
