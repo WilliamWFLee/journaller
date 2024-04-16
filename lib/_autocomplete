@@ -23,7 +23,7 @@ _journaller_write() {
 _journaller_config() {
   [[ $num_tokens -gt 3 ]] && return
 
-  COMPREPLY=($(compgen -W '$VALID_CONFIG_KEYS' -- "${COMP_WORDS[2]}"))
+  COMPREPLY=($(compgen -W '${VALID_CONFIG_KEYS[*]}' -- "${COMP_WORDS[2]}"))
 }
 
 _journaller() {
