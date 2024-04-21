@@ -3,13 +3,13 @@ cmd_help() {
 Syntax: ${JOURNALLER_COMMAND:-$0} <subcommand> <args>
 
 Possible subcommands:
-  write           write a new entry or update an existing entry
   read            read journal entries
+  write           write a new entry or update an existing entry
   copy            copy the entire journal to another directory
   config          configure journaller
-  help            display this help
   new-passphrase  add/update the journal password in the keyring
   migrate         migrate the journal to a new format if required
+  help            display this help
 EOF
 }
 

@@ -1,3 +1,4 @@
+. "$(dirname $BASH_SOURCE)/commands"
 . "$(dirname $BASH_SOURCE)/config"
 . "$(dirname $BASH_SOURCE)/entries"
 . "$(dirname $BASH_SOURCE)/date"
@@ -27,7 +28,7 @@ _journaller_config() {
 }
 
 _journaller() {
-  local commands=(help write read copy config new-passphrase migrate)
+  local commands="$(compgen -c cmd_ | sed 's/cmd_//')"
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)
