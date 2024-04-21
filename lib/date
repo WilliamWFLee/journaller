@@ -23,17 +23,14 @@ extract_date() {
 }
 
 interpret_date_text() {
-  if [[ "$1" == "today" ]]; then
+  date_text="${1:-$2}"
+  if [[ "$date_text" == "today" ]]; then
     current_date
-  elif [[ "$1" == "latest" ]]; then
+  elif [[ "$date_text" == "latest" ]]; then
     get_latest_entry_date
-  elif [[ "$1" =~ $(date_regex) ]]; then
-    echo "$1" | sed 's,-,/,g'
+  elif [[ "$date_text" =~ $(date_regex) ]]; then
+    echo "$date_text" | sed 's,-,/,g'
   else
-    if [[ "$2" == "latest" ]]; then
-      get_latest_entry_date
-    else
-      current_date
-    fi
+    return 1
   fi
 }

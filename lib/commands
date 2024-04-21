@@ -27,11 +27,11 @@ cmd_write() {
   retrieve_passphrase
 
   path="$(interpret_date_text $1 today)"
-  if [[ -z "$(echo $path | extract_date)" ]]; then
+  if [[ $? -ne 0 ]]; then
     log_error 'Date is not valid'
     log_error "Valid formats are: YYYY-MM-DD, YYYY/MM/DD, 'latest' or 'today' (default)"
-    return 1
   fi
+
   make_entry_dir "$path"
   set_current_entry_dir "$path"
   decrypt_dir $CURRENT_ENTRY_DIR
