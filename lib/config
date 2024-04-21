@@ -35,6 +35,13 @@ config_key_valid() {
   [[ " ${VALID_CONFIG_KEYS[*]} " == *" $1 "* ]]
 }
 
+validate_config_value() {
+  case $1 in
+  JOURNAL_EDITOR)
+    commands_exist $2 || return 1
+  esac
+}
+
 get_config_key() {
   echo "$(cat "$(config_path)" | sed -n "s/$(convert_name_to_config_var $1)=\\(.*\\)/\1/p" | sed "s/['\"]//g")"
 }
@@ -42,6 +49,8 @@ get_config_key() {
 set_config_key() {
   local config_key="$(convert_name_to_config_var $1)"
   local config_value="${2/#~/\$HOME}"
+  validate_config_value $config_key $config_value || return 1
+
   if config_file_exists && [[ $(cat "$(config_path)") = *"$config_key="* ]]; then
     sed "s,$config_key=.*,$config_key=\"$config_value\"," -i "$(config_path)"
   else

@@ -100,7 +100,9 @@ cmd_config() {
     if [[ -z "$config_value" ]]; then
       get_config_key "$config_key"
     else
-      set_config_key "$config_key" "$config_value"
+      if ! set_config_key "$config_key" "$config_value"; then
+        log_error 'Config value is not valid'
+      fi
     fi
   esac
 }
