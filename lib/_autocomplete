@@ -21,7 +21,7 @@ _journaller_config() {
 }
 
 _journaller() {
-  local commands="$(compgen -c cmd_ | sed 's/cmd_// ; /^__.*$/d ; s/_/-/g')"
+  local commands="$(journaller __autocomplete commands)"
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)

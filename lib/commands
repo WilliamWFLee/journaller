@@ -131,5 +131,8 @@ cmd___autocomplete() {
     ;;
   valid_config_keys)
     echo "${VALID_CONFIG_KEYS[*]}"
+    ;;
+  commands)
+    echo "$(compgen -c cmd_ | sed 's/cmd_// ; /^__.*$/d ; s/_/-/g')"
   esac
 }
