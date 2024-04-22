@@ -1,15 +1,8 @@
-. "$(dirname $BASH_SOURCE)/commands"
-. "$(dirname $BASH_SOURCE)/config"
-. "$(dirname $BASH_SOURCE)/entries"
-. "$(dirname $BASH_SOURCE)/date"
-. "$(dirname $BASH_SOURCE)/command_test"
-
 _journaller_read_and_write() {
   [[ $num_tokens -gt 3 ]] && return
 
-  load_config
   local suggestions=('today' 'latest')
-  IFS=$'\n' suggestions+=($(get_all_entry_dates))
+  IFS=$'\n' suggestions+=($(journaller __autocomplete entry_dates))
   COMPREPLY=($(compgen -W '${suggestions[@]}' -- "${COMP_WORDS[2]}"))
 }
 
@@ -24,11 +17,11 @@ _journaller_write() {
 _journaller_config() {
   [[ $num_tokens -gt 3 ]] && return
 
-  COMPREPLY=($(compgen -W '${VALID_CONFIG_KEYS[*]}' -- "${COMP_WORDS[2]}"))
+  COMPREPLY=($(compgen -W '$(journaller __autocomplete valid_config_keys)' -- "${COMP_WORDS[2]}"))
 }
 
 _journaller() {
-  local commands="$(compgen -c cmd_ | sed 's/cmd_//')"
+  local commands="$(compgen -c cmd_ | sed 's/cmd_// ; /^__.*$/d ; s/_/-/g')"
   local num_tokens="${#COMP_WORDS[@]}"
   case "$num_tokens" in
   2)
@@ -37,7 +30,7 @@ _journaller() {
   *)
     local subcommand="${COMP_WORDS[1]}"
     local subcommand_autocomplete="_journaller_$subcommand"
-    if commands_exist "$subcommand_autocomplete"; then
+    if (type "$subcommand_autocomplete" > /dev/null 2>&1); then
       "$subcommand_autocomplete"
     else
       return

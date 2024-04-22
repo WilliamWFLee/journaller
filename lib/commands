@@ -123,3 +123,13 @@ cmd_migrate() {
     log_info 'Journal already migrated, no action needed'
   fi
 }
+
+cmd___autocomplete() {
+  case $1 in
+  entry_dates)
+    get_all_entry_dates
+    ;;
+  valid_config_keys)
+    echo "${VALID_CONFIG_KEYS[*]}"
+  esac
+}

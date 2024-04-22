@@ -39,6 +39,7 @@ validate_config_value() {
   case $1 in
   JOURNAL_EDITOR)
     commands_exist $2 || return 1
+    ;;
   esac
 }
 
