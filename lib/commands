@@ -124,6 +124,33 @@ cmd_migrate() {
   fi
 }
 
+cmd_delete() {
+  if [[ ! "$1" =~ $(date_regex) ]]; then
+    log_error 'Please specify the date of the entry you want to delete'
+    return 1
+  fi
+
+  local current_entry_dir="$(absolute_entry_dir $(date_to_path $1))"
+  if [[ ! -d "$current_entry_dir" ]]; then
+    log_error "Journal entry directory does not exist for '$(path_to_date $1)'"
+    return 1
+  fi
+
+  log_warn '---------------------------------------------------------------'
+  log_warn "You are going to be deleting the entry for $1"
+  log_warn 'The entry **cannot** be restored unless you have'
+  log_warn "taken a backup by using 'journaller copy'"
+  log_warn '---------------------------------------------------------------'
+
+  read -p 'Confirm the date of the entry you want to delete: ' entry_date
+  if [[ "$(date_to_path $entry_date)" == "$(date_to_path $1)" ]]; then
+    rm -rf $current_entry_dir
+    log_info 'Entry deleted'
+  else
+    log_error 'Date does not match. Deletion cancelled'
+  fi
+}
+
 cmd___autocomplete() {
   case $1 in
   entry_dates)

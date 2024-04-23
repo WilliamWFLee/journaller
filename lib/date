@@ -29,7 +29,7 @@ interpret_date_text() {
   elif [[ "$date_text" == "latest" ]]; then
     get_latest_entry_date
   elif [[ "$date_text" =~ $(date_regex) ]]; then
-    echo "$date_text" | sed 's,-,/,g'
+    date_to_path "$date_text"
   else
     return 1
   fi
