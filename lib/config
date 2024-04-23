@@ -12,6 +12,7 @@ load_config() {
 
 restore_missing_keys() {
   set_config_key_unless_exists dir '$HOME/journal'
+  set_config_key_unless_exists editor 'vim'
 }
 
 create_config_file() {
@@ -29,7 +30,7 @@ convert_name_to_config_var() {
   echo "JOURNAL_${1^^}" | tr '-' '_'
 }
 
-VALID_CONFIG_KEYS=('dir' 'editor')
+VALID_CONFIG_KEYS=('dir' 'editor' 'backup-dir')
 
 config_key_valid() {
   [[ " ${VALID_CONFIG_KEYS[*]} " == *" $1 "* ]]

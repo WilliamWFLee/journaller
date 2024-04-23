@@ -28,7 +28,11 @@ export JOURNALLER_DEV=1
 export JOURNALLER_CONFIG_PATH="$(realpath -m $source_dir/../.journallerrc_dev)"
 export JOURNALLER_INSTALL_LOCATION="$(realpath -m source_dir/../dev_installation)"
 
-echo -e "JOURNAL_DIR='$(realpath -m $source_dir/../dev_journal)'\nJOURNAL_EDITOR=vim" > $JOURNALLER_CONFIG_PATH
+cat << EOF > $JOURNALLER_CONFIG_PATH
+JOURNAL_DIR='$(realpath -m $source_dir/../dev_journal)'
+JOURNAL_BACKUP_DIR='$(realpath -m $source_dir/../dev_backup_dir)'
+JOURNAL_EDITOR=vim
+EOF
 
 complete -r journaller
 unset -f journaller

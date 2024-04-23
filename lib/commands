@@ -5,7 +5,7 @@ Syntax: ${JOURNALLER_COMMAND:-$0} <subcommand> <args>
 Possible subcommands:
   read            read journal entries
   write           write a new entry or update an existing entry
-  copy            copy the entire journal to another directory
+  backup          backup the entire journal
   config          configure journaller
   new-passphrase  add/update the journal password in the keyring
   migrate         migrate the journal to a new format if required
@@ -16,7 +16,7 @@ EOF
 cmd_write() {
   if [[ -z "$JOURNAL_EDITOR" ]]; then
     log_error "You have not set your editor"
-    log_error "Set it using 'journaller set editor <editor_command>'"
+    log_error "Set it using 'journaller set editor <editor-command>'"
     exit 1
   elif ! commands_exist "$JOURNAL_EDITOR"; then
     log_error "Your configured editor '$JOURNAL_EDITOR' is not a valid command or path"
@@ -76,8 +76,16 @@ cmd_read() {
   encrypt_dir $current_entry_dir
 }
 
-cmd_copy() {
-  rsync -av --modify-window=1 --times --inplace "$(echo $JOURNAL_DIR | sed 's/\/$//g')" "$1"
+cmd_backup() {
+  if [[ -z "$JOURNAL_BACKUP_DIR" ]]; then
+    log_error 'Backup location has not been set'
+    log_info "Set using 'journaller config backup-dir <backup-dir>'"
+    return 1
+  fi
+
+  mkdir -p "$JOURNAL_BACKUP_DIR"
+  local filename="journaller_$(date +'%F_%H-%M-%S').tar.gz"
+  tar -C "$JOURNAL_DIR" -c . | gzip -9 -cq > "$JOURNAL_BACKUP_DIR/$filename"
 }
 
 cmd_config() {
