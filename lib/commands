@@ -26,30 +26,30 @@ cmd_write() {
 
   retrieve_passphrase
 
-  path="$(interpret_date_text $1 today)"
+  local path="$(interpret_date_text $1 today)"
   if [[ $? -ne 0 ]]; then
     log_error 'Date is not valid'
     log_error "Valid formats are: YYYY-MM-DD, YYYY/MM/DD, 'latest' or 'today' (default)"
   fi
 
   make_entry_dir "$path"
-  set_current_entry_dir "$path"
-  decrypt_dir $CURRENT_ENTRY_DIR
+  local current_entry_dir="$(absolute_entry_dir $path)"
+  decrypt_dir $current_entry_dir
 
-  local file="$CURRENT_ENTRY_DIR/text.md"
+  local file="$current_entry_dir/text.md"
   $JOURNAL_EDITOR "$file"
 
-  encrypt_dir $CURRENT_ENTRY_DIR
+  encrypt_dir $current_entry_dir
 }
 
 cmd_read() {
-  path="$(interpret_date_text $1 latest)"
-  set_current_entry_dir $path
-  if [[ ! -d "$CURRENT_ENTRY_DIR" ]]; then
+  local path="$(interpret_date_text $1 latest)"
+  local current_entry_dir="$(absolute_entry_dir $path)"
+  if [[ ! -d "$current_entry_dir" ]]; then
     log_error "Journal entry directory does not exist for '$(path_to_date $path)'"
     return 1
   fi
-  if ! entry_dir_has_encrypted_entry $CURRENT_ENTRY_DIR; then
+  if ! entry_dir_has_encrypted_entry $current_entry_dir; then
     log_error "Root document not found in journal entry '$(path_to_date $path)'"
     return 1
   fi
@@ -58,7 +58,7 @@ cmd_read() {
   log_info "Retrieving passphrase to decrypt journal entry"
   retrieve_passphrase
 
-  if decrypt_dir $CURRENT_ENTRY_DIR; then
+  if decrypt_dir $current_entry_dir; then
     log_info 'Decrypted entry'
   else
     log_error 'Failed to decrypt entry'
@@ -66,14 +66,14 @@ cmd_read() {
     return 1
   fi
 
-  pandoc -f markdown -t html $CURRENT_ENTRY_DIR/text.md > $CURRENT_ENTRY_DIR/text.html
-  open $CURRENT_ENTRY_DIR/text.html 2> /dev/null
+  pandoc -f markdown -t html $current_entry_dir/text.md > $current_entry_dir/text.html
+  open $current_entry_dir/text.html 2> /dev/null
 
   log_info "Opening in browser, press <Return> to continue" && read
   log_info "Shredding rendered journal entry and re-encrypting files"
 
-  shred_file $CURRENT_ENTRY_DIR/text.html
-  encrypt_dir $CURRENT_ENTRY_DIR
+  shred_file $current_entry_dir/text.html
+  encrypt_dir $current_entry_dir
 }
 
 cmd_copy() {

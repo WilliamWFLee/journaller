@@ -9,8 +9,8 @@ get_latest_entry_date() {
   date_to_path "$(get_all_entry_dates | sort | tail -n1)"
 }
 
-set_current_entry_dir() {
-  CURRENT_ENTRY_DIR="$JOURNAL_DIR/$1"
+absolute_entry_dir() {
+  echo "$JOURNAL_DIR/$1"
 }
 
 make_entry_dir() {
