@@ -5,6 +5,7 @@ Syntax: ${JOURNALLER_COMMAND:-$0} <subcommand> <args>
 Possible subcommands:
   read            read journal entries
   write           write a new entry or update an existing entry
+  delete          delete an entry
   backup          backup the entire journal
   config          configure journaller
   new-passphrase  add/update the journal password in the keyring
@@ -147,7 +148,7 @@ cmd_delete() {
   log_warn '---------------------------------------------------------------'
   log_warn "You are going to be deleting the entry for $1"
   log_warn 'The entry **cannot** be restored unless you have'
-  log_warn "taken a backup by using 'journaller copy'"
+  log_warn "taken a backup by using 'journaller backup'"
   log_warn '---------------------------------------------------------------'
 
   read -p 'Confirm the date of the entry you want to delete: ' entry_date
