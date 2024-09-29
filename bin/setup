@@ -11,11 +11,11 @@ shopt -s extglob globstar nullglob
 
 # Dependencies
 
-if commands_exist gpg pandoc keyring; then
+if commands_exist gpg pandoc secret-tool; then
   log_info "Dependencies already satisfied"
 else
   log_info "Installing missing dependencies using apt..."
-  if ! sudo apt install gpg pandoc python3-keyring -y --no-install-recommends; then
+  if ! sudo apt install gpg pandoc libsecret-tools -y --no-install-recommends; then
     log_error "Dependencies could not be installed; check output"
     exit 1
   fi
