@@ -18,7 +18,7 @@ new_passphrase() {
 }
 
 save_passphrase_to_keyring() {
-  echo $PASSPHRASE | secret-tool store --label='Passphrase for journaller' application journaller
+  echo -n $PASSPHRASE | secret-tool store --label='Passphrase for journaller' application journaller
 }
 
 retrieve_old_style_passphrase() {
