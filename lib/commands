@@ -17,42 +17,53 @@ EOF
 cmd_write() {
   if [[ -z "$JOURNAL_EDITOR" ]]; then
     log_error "You have not set your editor"
-    log_error "Set it using 'journaller set editor <editor-command>'"
-    exit 1
+    log_error "Set it using 'journaller config editor <editor-command>'"
   elif ! commands_exist "$JOURNAL_EDITOR"; then
     log_error "Your configured editor '$JOURNAL_EDITOR' is not a valid command or path"
-    log_error "Please check you've configured your editor correctly"
-    exit 1
+    log_error_and_exit "Please check you've configured your editor correctly"
   fi
-
-  retrieve_passphrase
 
   local path="$(interpret_date_text $1 today)"
   if [[ $? -ne 0 ]]; then
     log_error 'Date is not valid'
-    log_error "Valid formats are: YYYY-MM-DD, YYYY/MM/DD, 'latest' or 'today' (default)"
+    log_error_and_exit "Valid formats are: YYYY-MM-DD, YYYY/MM/DD, 'latest' or 'today' (default)"
   fi
 
-  make_entry_dir "$path"
+  retrieve_passphrase
+
+  make_entry_dir "$path" || log_error_and_exit 'Failed to create directory for entry'
+
   local current_entry_dir="$(absolute_entry_dir $path)"
+  local entry_file="$current_entry_dir/text.md"
+
   decrypt_dir $current_entry_dir
+  case $? in
+  0)
+    log_info 'Existing entry decrypted'
+    ;;
+  1)
+    [[ -f $entry_file ]] && log_warn 'Journal entry was left unencrypted' || log_info 'Created new entry directory'
+    ;;
+  2)
+    log_error 'Failed to decrypt entry'
+    log_error_and_exit 'Make sure the passphrase in the keychain is correct'
+    ;;
+  esac
 
-  local file="$current_entry_dir/text.md"
-  $JOURNAL_EDITOR "$file"
-
-  encrypt_dir $current_entry_dir
+  $JOURNAL_EDITOR "$entry_file"
+  encrypt_dir $current_entry_dir \
+    && log_info "Written and encrypted entry to ${current_entry_dir}" \
+    || log_error_and_exit "Failed to write entry to ${current_entry_dir}"
 }
 
 cmd_read() {
   local path="$(interpret_date_text $1 latest)"
   local current_entry_dir="$(absolute_entry_dir $path)"
   if [[ ! -d "$current_entry_dir" ]]; then
-    log_error "Journal entry directory does not exist for '$(path_to_date $path)'"
-    return 1
+    log_error_and_exit "Journal entry directory does not exist for '$(path_to_date $path)'"
   fi
   if ! entry_dir_has_encrypted_entry $current_entry_dir; then
-    log_error "Root document not found in journal entry '$(path_to_date $path)'"
-    return 1
+    log_error_and_exit "Root document not found in journal entry '$(path_to_date $path)'"
   fi
 
   log_info "Opening journal entry"
@@ -63,25 +74,23 @@ cmd_read() {
     log_info 'Decrypted entry'
   else
     log_error 'Failed to decrypt entry'
-    log_error 'Make sure the passphrase in the keychain is correct'
-    return 1
+    log_error_and_exit 'Make sure the passphrase in the keychain is correct'
   fi
 
-  pandoc -f markdown -t html $current_entry_dir/text.md > $current_entry_dir/text.html
-  open $current_entry_dir/text.html 2> /dev/null
+  pandoc -f markdown -t html $current_entry_dir/text.md > $current_entry_dir/text.html || log_error_and_exit 'Failed to convert entry into HTML'
+  open $current_entry_dir/text.html 2> /dev/null || log_error_and_exit 'Failed to open HTMl in browser'
 
   log_info "Opening in browser, press <Return> to continue" && read
   log_info "Shredding rendered journal entry and re-encrypting files"
 
-  shred_file $current_entry_dir/text.html
+  shred_file $current_entry_dir/text.html || log_warn 'Failed to shred rendered HTML'
   encrypt_dir $current_entry_dir
 }
 
 cmd_backup() {
   if [[ -z "$JOURNAL_BACKUP_DIR" ]]; then
     log_error 'Backup location has not been set'
-    log_info "Set using 'journaller config backup-dir <backup-dir>'"
-    return 1
+    log_error_and_exit "Set using 'journaller config backup-dir <backup-dir>'"
   fi
 
   mkdir -p "$JOURNAL_BACKUP_DIR"
@@ -103,14 +112,13 @@ cmd_config() {
     local config_value="$2"
     if ! config_key_valid $config_key; then
       log_error "Config key '$config_key' is not valid"
-      log_error "Possible keys are: ${VALID_CONFIG_KEYS[*]}" 
-      exit 1
+      log_error_and_exit "Possible keys are: ${VALID_CONFIG_KEYS[*]}" 
     fi
     if [[ -z "$config_value" ]]; then
       get_config_key "$config_key"
     else
       if ! set_config_key "$config_key" "$config_value"; then
-        log_error 'Config value is not valid'
+        log_error_and_exit 'Config value is not valid'
       fi
     fi
   esac
@@ -120,7 +128,7 @@ cmd_new_passphrase() {
   if set_and_save_new_passphrase; then
     log_info "Password successfully changed and saved to keyring"
   else
-    log_error "Password was not updated"
+    log_error_and_exit "Password was not updated"
   fi
 }
 
@@ -135,14 +143,12 @@ cmd_migrate() {
 
 cmd_delete() {
   if [[ ! "$1" =~ $(date_regex) ]]; then
-    log_error 'Please specify the date of the entry you want to delete'
-    return 1
+    log_error_and_exit 'Please specify the date of the entry you want to delete'
   fi
 
   local current_entry_dir="$(absolute_entry_dir $(date_to_path $1))"
   if [[ ! -d "$current_entry_dir" ]]; then
-    log_error "Journal entry directory does not exist for '$(path_to_date $1)'"
-    return 1
+    log_error_and_exit "Journal entry directory does not exist for '$(path_to_date $1)'"
   fi
 
   log_warn '---------------------------------------------------------------'
@@ -156,7 +162,7 @@ cmd_delete() {
     rm -rf $current_entry_dir
     log_info 'Entry deleted'
   else
-    log_error 'Date does not match. Deletion cancelled'
+    log_error_and_exit 'Date does not match. Deletion cancelled'
   fi
 }
 

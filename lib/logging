@@ -13,3 +13,7 @@ log_warn() {
 log_error() {
   echo -e "$ERROR ${@}" > /dev/stderr
 }
+
+log_error_and_return() {
+  log_error $1 && exit ${2:-1}
+}

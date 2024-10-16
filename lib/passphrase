@@ -35,8 +35,7 @@ retrieve_passphrase() {
   if [[ -z "$PASSPHRASE" ]]; then
     PASSPHRASE="$(retrieve_old_style_passphrase)"
     if [[ ! -z "$PASSPHRASE" ]]; then
-      delete_old_style_passphrase
-      save_passphrase_to_keyring
+      save_passphrase_to_keyring && delete_old_style_passphrase
 
       return 0
     fi

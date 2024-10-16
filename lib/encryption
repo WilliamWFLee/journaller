@@ -8,11 +8,11 @@ encrypt_dir() {
   local temporary_tar_filename="$(mktemp -d)/entry.tar.gz"
   [[ -f "${encrypted_entry_filename}" ]] && return 1
 
-  tar -C "$1" -c . | gzip -9 -cq > "$temporary_tar_filename"
-  gpg -c --batch --passphrase "$PASSPHRASE" "$temporary_tar_filename"
-  mv "${temporary_tar_filename}.gpg" "${encrypted_entry_filename}" 
-  shred_file "${temporary_tar_filename}"
-  shred_unencrypted_entry_files "$1"
+  tar -C "$1" -c . | gzip -9 -cq > "$temporary_tar_filename" \
+    && gpg -c --batch --passphrase "$PASSPHRASE" "$temporary_tar_filename" \
+    && mv "${temporary_tar_filename}.gpg" "${encrypted_entry_filename}" \
+    && shred_file "${temporary_tar_filename}" \
+    && shred_unencrypted_entry_files "$1"
 }
 
 decrypt_dir() {
@@ -21,9 +21,9 @@ decrypt_dir() {
   [[ ! -f "${encrypted_entry_file}" ]] && return 1
 
   if decrypt_entry_file $encrypted_entry_file; then
-    tar -C $1 -xf $entry_tar_filename
-    rm $encrypted_entry_file
-    shred_file $entry_tar_filename
+    tar -C $1 -xf $entry_tar_filename \
+      && rm $encrypted_entry_file \
+      && shred_file $entry_tar_filename
     return 0
   fi
 
